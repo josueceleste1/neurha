@@ -1,4 +1,3 @@
-// components/FolderFilesModal.tsx
 import React, { useState, DragEvent } from "react";
 import {
   FileText,
@@ -66,8 +65,8 @@ export default function FolderFilesModal({
 
   function handleDragOver(e: DragEvent) {
     e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
     setIsDragging(true);
+    console.log("Drag over modal");
   }
 
   function handleDragLeave() {
@@ -76,7 +75,9 @@ export default function FolderFilesModal({
 
   function handleDrop(e: DragEvent) {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
+    console.log("Drop detectado na modal", e.dataTransfer.files);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleAdd(e.dataTransfer.files);
       e.dataTransfer.clearData();
@@ -92,12 +93,22 @@ export default function FolderFilesModal({
     >
       <div
         className={`
-          bg-[#5B21A4] rounded-2xl w-11/12 max-w-4xl h-[80vh] overflow-hidden shadow-2xl
+          relative bg-[#5B21A4] rounded-2xl w-11/12 max-w-4xl h-[80vh] overflow-hidden shadow-2xl
           ${isDragging ? "border-4 border-dashed border-white/60" : ""}
         `}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
+        {/* Overlay de drop */}
+        {isDragging && (
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-xl pointer-events-none z-10">
+            Solte os arquivos aqui
+          </div>
+        )}
+
         {/* Header */}
-        <div className="bg-white/10 border-b border-white/20 p-4 flex justify-between items-center">
+        <div className="bg-white/10 border-b border-white/20 p-4 flex justify-between items-center relative z-20">
           <h2 className="text-white text-2xl font-semibold truncate">
             {folderName}
           </h2>
@@ -123,14 +134,14 @@ export default function FolderFilesModal({
           </div>
         </div>
 
-        {/* Grid of files */}
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {/* Grid de arquivos */}
+        <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 relative z-20">
           {files.map((file) => (
             <div
               key={file.id}
               className="bg-white/10 border border-white/20 rounded-lg p-2 flex flex-col items-start hover:bg-white/20 transition relative"
             >
-              {/* Actions */}
+              {/* Ações */}
               <div className="absolute top-2 right-2 flex space-x-1">
                 <a
                   href={file.url}
@@ -148,13 +159,13 @@ export default function FolderFilesModal({
                 </button>
               </div>
 
-              {/* Icon */}
+              {/* Ícone */}
               <FileText className="w-5 h-5 text-purple-300 mb-1" />
 
-              {/* Name / Edit input */}
+              {/* Nome / Campo de edição */}
               {editingId === file.id ? (
                 <input
-                  className="w-full max-w-full overflow-hidden truncate bg-transparent border-b border-white/50 text-white outline-none text-sm mb-1"
+                  className="w-full bg-transparent text-white text-sm mb-1 border-b border-white/50 outline-none"
                   value={draftName}
                   onChange={(e) => setDraftName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && confirmRename(file)}
@@ -162,12 +173,12 @@ export default function FolderFilesModal({
                   autoFocus
                 />
               ) : (
-                <span className="w-full max-w-full overflow-hidden truncate text-white text-sm mb-1">
-                  {file.name}
+                <span className="block w-full overflow-hidden truncate text-white text-sm mb-1">
+                  {file.name || file.url.split("/").pop() || "Sem nome"}
                 </span>
               )}
 
-              {/* Size */}
+              {/* Tamanho */}
               <span className="text-white/60 text-xs">{file.size}</span>
             </div>
           ))}
