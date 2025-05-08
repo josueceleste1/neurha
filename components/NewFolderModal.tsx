@@ -2,14 +2,7 @@
 
 import React, { FC } from "react";
 import { X } from "lucide-react";
-
-interface NewFolderModalProps {
-  isOpen: boolean;
-  folderName: string;
-  onChange: (name: string) => void;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
+import { NewFolderModalProps } from "@/types/files";
 
 const NewFolderModal: FC<NewFolderModalProps> = ({
   isOpen,

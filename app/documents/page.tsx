@@ -4,6 +4,9 @@ import React, { FC, useState, useEffect, useCallback, DragEvent } from "react";
 import Header from "@/components/Header";
 import NewFolderModal from "@/components/NewFolderModal";
 import FolderFilesModal from "@/components/FolderFilesModal";
+import { decodeFileName } from "@/utils/decodeFileName";
+import { FileItem, FolderItem } from "@/types/files";
+
 import {
   Folder as FolderIcon,
   FileText,
@@ -14,18 +17,6 @@ import {
   Upload as UploadIcon,
 } from "lucide-react";
 
-interface FileItem {
-  id: string;
-  name: string;
-  size?: string;
-  url: string;
-}
-
-interface FolderItem {
-  id: string;
-  name: string;
-  files: FileItem[];
-}
 
 const DocumentsPage: FC = () => {
   const [folders, setFolders] = useState<FolderItem[]>([]);
@@ -142,11 +133,11 @@ const DocumentsPage: FC = () => {
         prev.map((folder) =>
           folder.id === currentFolderId
             ? {
-                ...folder,
-                files: folder.files.map((file) =>
-                  file.id === fileId ? { ...file, name: newName } : file
-                ),
-              }
+              ...folder,
+              files: folder.files.map((file) =>
+                file.id === fileId ? { ...file, name: newName } : file
+              ),
+            }
             : folder
         )
       );
@@ -192,7 +183,7 @@ const DocumentsPage: FC = () => {
                   if (data) {
                     try {
                       const { fileId, sourceId } = JSON.parse(data);
-                    } catch {}
+                    } catch { }
                   }
                 }}
               >
@@ -235,8 +226,8 @@ const DocumentsPage: FC = () => {
                       className="flex items-center gap-2 bg-white/5 p-2 rounded-lg"
                     >
                       <FileText className="w-4 h-4 text-purple-300" />
-                      <a href={file.url} download={file.name || (file as any).originalName} className="text-white/80 text-xs truncate hover:underline">
-                        {file.name || (file as any).originalName}
+                      <a href={file.url} download={decodeFileName(file.name || (file as any).originalName)} className="text-white/80 text-xs truncate hover:underline">
+                        {decodeFileName(file.name || (file as any).originalName)}
                       </a>
                     </div>
                   ))}

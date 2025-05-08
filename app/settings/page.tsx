@@ -4,11 +4,7 @@
 import React, { FC, useState } from "react";
 import Header from "@/components/Header";
 import { Settings as Cog } from "lucide-react";
-
-interface Collaborator {
-  email: string;
-  role: string;
-}
+import { Collaborator } from "@/types/settings";
 
 const initialCollaborators: Collaborator[] = [
   { email: "ana.silva@empresa.com", role: "Admin" },
