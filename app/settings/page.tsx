@@ -2,7 +2,7 @@
 "use client";
 
 import React, { FC, useState } from "react";
-import Header from "@/components/Header";
+import Header from "@/components/ui/Header";
 import { Settings as Cog } from "lucide-react";
 import { Collaborator } from "@/types/settings";
 

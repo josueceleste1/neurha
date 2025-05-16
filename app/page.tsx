@@ -14,7 +14,7 @@ export default function HomePage() {
               <span className="text-[#C4B5FD]">NeuRHa AI</span>
             </h1>
             <p className="text-lg md:text-2xl text-[#DDD6FE] mb-10">
-              Seu copiloto inteligente de RH. Tire dúvidas sobre férias, benefícios, políticas e mais — com base na base de conhecimento da sua empresa.
+                Aumente a produtividade de qualquer setor com nossa plataforma de IA conversacional. Crie fluxos automatizados, responda dúvidas 24/7, e ofereça uma experiência personalizada para clientes e colaboradores.
             </p>
             <Link href="/chat">
               <button className="bg-[#A855F7] hover:bg-[#9333EA] text-white font-semibold px-10 py-4 rounded-xl transition text-lg md:text-xl">

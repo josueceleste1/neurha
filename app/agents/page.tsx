@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import Header from "@/components/Header";
+import Header from "@/components/ui/Header";
 import AgentList from "@/components/agents/AgentList";
 import { Users } from "lucide-react";
 

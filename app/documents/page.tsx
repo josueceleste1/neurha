@@ -1,9 +1,9 @@
 "use client";
 
 import React, { FC, useState, useEffect, useCallback, DragEvent } from "react";
-import Header from "@/components/Header";
-import NewFolderModal from "@/components/NewFolderModal";
-import FolderFilesModal from "@/components/FolderFilesModal";
+import Header from "@/components/ui/Header";
+import NewFolderModal from "@/components/documents/NewFolderModal";
+import FolderFilesModal from "@/components/documents/FolderFilesModal";
 import { decodeFileName } from "@/utils/decodeFileName";
 import { FileItem, FolderItem } from "@/types/files";
 

@@ -19,7 +19,7 @@ const Header: FC<HeaderProps> = ({ title, icon, userName, onLogout }) => {
   }, []);
 
   return (
-    <header className="w-full px-6 py-4 flex items-center justify-between border-b border-white/10">
+    <header className="w-full px-6 py-4 flex items-center justify-between border-b border-white/10 z-50">
       <div className="flex items-center gap-3 text-white">
         {icon && <span className="flex-shrink-0">{icon}</span>}
         <h1 className="text-xl font-semibold">{title}</h1>
