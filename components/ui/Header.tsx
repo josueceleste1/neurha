@@ -35,7 +35,7 @@ const Header: FC<HeaderProps> = ({ title, icon, userName, onLogout }) => {
           <User className="w-5 h-5" />
         </button>
         {menuOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg text-white">
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg text-black">
             <div className="px-4 py-2 text-sm">{userName}</div>
             <button
               type="button"
@@ -43,7 +43,7 @@ const Header: FC<HeaderProps> = ({ title, icon, userName, onLogout }) => {
                 setMenuOpen(false);
                 onLogout();
               }}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/20 rounded-lg"
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 rounded-lg"
             >
               <LogOut className="w-4 h-4" />
               Sair

@@ -153,7 +153,7 @@ const DocumentsPage: FC = () => {
         <Header
           title="Documentos"
           icon={<FolderIcon className="w-6 h-6 text-purple-300" />}
-          userName="João Silva"
+          userName="Josué Celeste "
           onLogout={() => console.log("Logout")}
         />
 

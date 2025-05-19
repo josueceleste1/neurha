@@ -7,7 +7,7 @@ import AgentList from "@/components/agents/AgentList";
 import { Users } from "lucide-react";
 
 const AgentsPage = () => {
-  const userName = "João Silva";
+  const userName = "Josué Celeste";
   const handleLogout = () => console.log("Logout");
 
   return (

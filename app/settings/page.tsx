@@ -7,7 +7,7 @@ import { Settings as Cog } from "lucide-react";
 import { Collaborator } from "@/types/settings";
 
 const initialCollaborators: Collaborator[] = [
-  { email: "ana.silva@empresa.com", role: "Admin" },
+  { email: "ana.@empresa.com", role: "Admin" },
   { email: "carlos.hr@empresa.com", role: "Editor" },
 ];
 
@@ -208,7 +208,7 @@ const SettingsPage: FC = () => {
   };
 
   // User
-  const userName = "João Silva";
+  const userName = "Josué Celeste ";
   const handleLogout = () => console.log("Logout");
 
   return (

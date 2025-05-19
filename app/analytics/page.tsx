@@ -52,7 +52,7 @@ function avgRating(data: { name: string; value: number }[]): string {
 }
 
 const AnalyticsPage: FC = () => {
-  const userName = "João Silva";
+  const userName = "Josué Celeste";
   const handleLogout = () => console.log("Logout");
 
   return (

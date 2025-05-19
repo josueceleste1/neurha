@@ -57,7 +57,7 @@ const ChatPage: FC = () => {
     endRef,
   } = useChat(selectedAssistant.greeting);
 
-  const userName = "João Silva";
+  const userName = "Josué Celeste";
   const handleLogout = () => console.log("Logout");
 
   const changeAssistant = (assistant: Assistant) => {
