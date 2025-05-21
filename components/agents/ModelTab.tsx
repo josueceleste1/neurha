@@ -7,7 +7,7 @@ export interface ModelOption {
 }
 
 export interface ModelTabProps {
-  provider: "openai" | "anthropic" | "ollama" | "custom";
+  provider: "openai" | "anthropic" | "ollama" | "grok" | "gemini" | "custom";
   onProviderChange: (key: ModelTabProps['provider']) => void;
   specificModel: string;
   onSpecificModelChange: (value: string) => void;
@@ -17,7 +17,7 @@ export interface ModelTabProps {
   onTopKChange: (value: string) => void;
   systemPrompt: string;
   onSystemPromptChange: (value: string) => void;
-  vectorDb: "supabase" | "pinecone" | "qdrant" | "weaviate";
+  vectorDb: "chroma" | "supabase" | "pinecone" | "qdrant" | "weaviate";
   onVectorDbChange: (key: ModelTabProps['vectorDb']) => void;
   apiKey: string;
   onApiKeyChange: (value: string) => void;
@@ -39,15 +39,19 @@ const PROVIDERS = [
   { key: "openai", label: "OpenAI", desc: "GPT-4o, GPT-3.5-Turbo" },
   { key: "anthropic", label: "Anthropic", desc: "Claude 3" },
   { key: "ollama", label: "Ollama", desc: "Modelos locais" },
+  { key: "gemini", label: "Gemini", desc: "Gemini 1.5 Pro" },
+  { key: "grok", label: "Grok", desc: "Grok 1.5 Pro" },
   { key: "custom", label: "Personalizado", desc: "API personalizada" },
 ];
 
 // Opções de bases vetoriais
 const VECTOR_DBS = [
+  { key: "chroma", label: "Chroma", desc: "Armazenamento vetorial local" },
   { key: "supabase", label: "Supabase", desc: "pgvector" },
   { key: "pinecone", label: "Pinecone", desc: "Armazenamento vetorial dedicado" },
   { key: "qdrant", label: "Qdrant", desc: "Alta performance" },
   { key: "weaviate", label: "Weaviate", desc: "Busca semântica" },
+  { key: "milvus", label: "Milvus", desc: "Armazenamento vetorial local" },
 ];
 
 const labelClasses = "block text-sm font-medium text-gray-700 mb-1.5";

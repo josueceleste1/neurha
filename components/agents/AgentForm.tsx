@@ -49,14 +49,14 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
   const [chunkOverlap, setChunkOverlap] = useState("50");
   const [embeddingModel, setEmbeddingModel] = useState("text-embedding-3-large");
   // Model
-  const [provider, setProvider] = useState<"openai" | "anthropic" | "ollama" | "custom">("openai");
+  const [provider, setProvider] = useState<"openai" | "anthropic" | "ollama" | "grok" | "gemini" | "custom">("openai");
   const [specificModel, setSpecificModel] = useState("GPT-4o");
   const [temperature, setTemperature] = useState(0.7);
   const [topK, setTopK] = useState("5");
   const [systemPrompt, setSystemPrompt] = useState(
     "Você é um assistente AI que responde perguntas de forma útil e precisa."
   );
-  const [vectorDb, setVectorDb] = useState<"supabase" | "pinecone" | "qdrant" | "weaviate">("supabase");
+  const [vectorDb, setVectorDb] = useState<"chroma" | "supabase" | "pinecone" | "qdrant" | "weaviate">("supabase");
   const [apiKey, setApiKey] = useState("");
   // Permissions
   const [userSearch, setUserSearch] = useState("");
