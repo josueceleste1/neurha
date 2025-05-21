@@ -1,4 +1,3 @@
-
 export interface FileItem {
     id: string;
     name: string;
@@ -14,6 +13,7 @@ export interface FolderFilesModalProps {
   onRename: (fileId: string, newName: string) => void;
   onDelete: (fileId: string) => void;
   onAdd: (files: FileList) => void;
+  isLoading?: boolean;
 }
 
 export interface NewFolderModalProps {

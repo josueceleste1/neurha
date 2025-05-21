@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import Toast from "@/components/ui/Toast";
 import BasicTab from "./BasicTab";
@@ -29,6 +29,8 @@ const tabs: { value: Tab; label: string }[] = [
   { value: "permissions", label: "Permissões" },
   { value: "integration", label: "Integrações" },
 ];
+
+const NEST_API_URL = "http://localhost:3001/api/v1";
 
 const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
   const [activeTab, setActiveTab] = useState<Tab>("basic");
@@ -72,6 +74,21 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
   // Toast
   const [toastData, setToastData] = useState<ToastData | null>(null);
 
+  const [availableDocuments, setAvailableDocuments] = useState<MyDocument[]>([]);
+
+  useEffect(() => {
+    async function fetchDocuments() {
+      try {
+        const res = await fetch(`${NEST_API_URL}/documents`);
+        const data = await res.json();
+        setAvailableDocuments(Array.isArray(data) ? data : []);
+      } catch (err) {
+        // opcional: exibir erro
+      }
+    }
+    fetchDocuments();
+  }, []);
+
   // Helpers
   function generateApiToken() {
     const token = Math.random().toString(36).substring(2, 10);
@@ -97,23 +114,88 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
 
   function handleAddUser() {
     if (userSearch.trim()) {
-      setSelectedUsers(prev => [...prev, userSearch.trim()]);
-      setToastData({ title: "Usuário adicionado", description: userSearch.trim() });
+      setSelectedUsers(prev => {
+        const updated = [...prev, userSearch.trim()];
+        const user = MOCK_USERS.find(u => u.id === userSearch.trim());
+        setToastData({
+          title: "Usuário adicionado",
+          description: user ? user.name : userSearch.trim()
+        });
+        console.log("Usuários selecionados:", updated);
+        return updated;
+      });
       setUserSearch("");
     }
   }
 
   function handleAddTeam() {
     if (teamSearch.trim()) {
-      setSelectedTeams(prev => [...prev, teamSearch.trim()]);
-      setToastData({ title: "Equipe adicionada", description: teamSearch.trim() });
+      setSelectedTeams(prev => {
+        const updated = [...prev, teamSearch.trim()];
+        const team = MOCK_TEAMS.find(t => t.id === teamSearch.trim());
+        setToastData({
+          title: "Equipe adicionada",
+          description: team ? team.name : teamSearch.trim()
+        });
+        console.log("Equipes selecionadas:", updated);
+        return updated;
+      });
       setTeamSearch("");
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setToastData({ title: "Agente criado", description: `O agente ${name} foi cadastrado com sucesso.` });
+
+    // Log dos dados do agente antes de enviar para a API
+    const agenteParaCriar = {
+      name,
+      description,
+      tags,
+      status,
+      uploadFiles,
+      selectedDocs,
+      cron,
+      chunkSize,
+      chunkOverlap,
+      embeddingModel,
+      provider,
+      specificModel,
+      temperature,
+      topK,
+      systemPrompt,
+      vectorDb,
+      apiKey,
+      selectedUsers,
+      selectedTeams,
+      webhookUrl,
+      isWebhookActive,
+      apiToken,
+      isApiActive,
+      widgetCode,
+      isWidgetActive,
+      url,
+    };
+    console.log('Dados do agente a ser criado:', agenteParaCriar);
+
+    try {
+      const res = await fetch(`${NEST_API_URL}/agents`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          description,
+          tags,
+          status,
+          documentIds: selectedDocs, 
+        }),
+      });
+      if (!res.ok) throw new Error("Erro ao criar agente");
+      setToastData({ title: "Agente criado", description: `O agente ${name} foi cadastrado com sucesso.` });
+      onCancel(); // Fecha o modal após criar
+    } catch (err) {
+      setToastData({ title: "Erro", description: "Não foi possível criar o agente." });
+    }
   }
 
   function handleToastClose() {
@@ -194,7 +276,7 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
               url={url}
               onUrlChange={setUrl}
               onAddUrl={handleAddUrl}
-              myDocuments={myDocuments}
+              myDocuments={availableDocuments}
               selectedDocs={selectedDocs}
               onSelectedDocsChange={setSelectedDocs}
               onConnectSharePoint={() => { }}

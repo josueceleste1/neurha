@@ -1,164 +1,231 @@
-// components/FolderFilesModal.tsx
-import React, { useState, DragEvent } from "react";
-import { decodeFileName } from "@/utils/decodeFileName";
-import { FolderFilesModalProps, FileItem } from "@/types/files";
+import React, { useState } from "react";
 import {
-  FileText,
-  X,
-  Edit2,
-  Trash2,
-  PlusCircle,
+  UploadCloud,
+  Search,
+  Sliders,
   Download as DownloadIcon,
+  Trash2,
+  Loader2,
 } from "lucide-react";
+import { decodeFileName } from "@/utils/decodeFileName";
 
-export default function FolderFilesModal({
-  isOpen,
-  folderName,
-  files,
-  onClose,
-  onRename,
+export interface DocumentItem {
+  id: string;
+  name: string;
+  category: string;
+  type: string;
+  size: string;
+  updated: string;
+  url: string;
+}
+
+export interface CategoryCount {
+  name: string;
+  count: number;
+}
+
+export interface StorageStats {
+  total: string;
+  pdf: string;
+  docs: string;
+  sheets: string;
+}
+
+interface DocumentManagementPageProps {
+  documents: DocumentItem[];
+  recentDocuments: DocumentItem[];
+  categories: CategoryCount[];
+  storage: StorageStats;
+  onDelete: (id: string) => void;
+  onUpload: (files: FileList) => Promise<void>;
+}
+
+export default function DocumentManagementPage({
+  documents,
+  recentDocuments,
+  categories,
+  storage,
   onDelete,
-  onAdd,
-}: FolderFilesModalProps) {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [draftName, setDraftName] = useState("");
-  const [isDragging, setIsDragging] = useState(false);
+  onUpload,
+}: DocumentManagementPageProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  const filteredDocs = documents.filter((doc) =>
+    doc.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  function startEdit(fileId: string, currentName: string) {
-    setEditingId(fileId);
-    setDraftName(currentName.replace(/\.[^.]+$/, ""));
-  }
-
-  function confirmRename(file: FileItem) {
-    const extMatch = file.name.match(/(\.[^.]+)$/);
-    const newName = draftName.trim() + (extMatch ? extMatch[1] : "");
-    onRename(file.id, newName);
-    setEditingId(null);
-  }
-
-  function handleAdd(files: FileList) {
-    onAdd(files);
-  }
-
-  function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      handleAdd(e.target.files);
-    }
-    e.target.value = "";
-  }
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(true);
-  }
-
-  function handleDragLeave() {
-    setIsDragging(false);
-  }
-
-  function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleAdd(e.dataTransfer.files);
-      e.dataTransfer.clearData();
+  async function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files?.length) return;
+    
+    setIsUploading(true);
+    setUploadError(null);
+    
+    try {
+      await onUpload(e.target.files);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Erro ao fazer upload dos arquivos');
+    } finally {
+      setIsUploading(false);
+      e.target.value = "";
     }
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      <div
-        className={`
-          relative bg-[#5B21A4] rounded-2xl w-11/12 max-w-4xl h-[80vh] overflow-hidden shadow-2xl
-          ${isDragging ? "border-4 border-dashed border-white/60" : ""}
-        `}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {isDragging && (
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center text-white text-xl pointer-events-none z-10">
-            Solte os arquivos aqui
-          </div>
-        )}
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">Documentos RH</h1>
+        <label 
+          className={`inline-flex items-center ${
+            isUploading ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'
+          } text-white px-4 py-2 rounded-lg cursor-pointer`}
+          aria-label="Carregar Documento"
+        >
+          {isUploading ? (
+            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+          ) : (
+            <UploadCloud className="w-5 h-5 mr-2" />
+          )}
+          {isUploading ? 'Carregando...' : 'Carregar Documento'}
+          <input
+            type="file"
+            multiple
+            className="hidden"
+            onChange={handleFileInputChange}
+            disabled={isUploading}
+            accept=".pdf,.doc,.docx,.xls,.xlsx"
+          />
+        </label>
+      </div>
 
-        <div className="bg-white/10 border-b border-white/20 p-4 flex justify-between items-center relative z-20">
-          <h2 className="text-white text-2xl font-semibold truncate">
-            {folderName}
-          </h2>
-          <div className="flex items-center space-x-4">
-            <label
-              title="Adicionar arquivos"
-              className="cursor-pointer text-white/80 hover:text-white"
-            >
-              <PlusCircle className="w-6 h-6" />
-              <input
-                type="file"
-                multiple
-                className="hidden"
-                onChange={handleFileInputChange}
-              />
-            </label>
-            <button
-              onClick={onClose}
-              className="text-white hover:text-gray-200"
-            >
-              <X className="w-6 h-6" />
-            </button>
+      {uploadError && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+          {uploadError}
+        </div>
+      )}
+
+      {/* Table and Search */}
+      <div className="bg-white rounded-2xl shadow p-4 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 w-1/3">
+            <Search className="w-4 h-4 text-gray-500 mr-2" />
+            <input
+              type="text"
+              placeholder="Pesquisar documentos..."
+              className="w-full bg-transparent outline-none text-gray-700"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Pesquisar documentos"
+            />
           </div>
+          <button 
+            className="flex items-center text-gray-600 hover:text-gray-800"
+            aria-label="Aplicar filtros"
+          >
+            <Sliders className="w-5 h-5 mr-1" />
+            Filtros
+          </button>
+        </div>
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-gray-500 text-sm border-b">
+              <th className="py-2">Nome do Documento</th>
+              <th>Categoría</th>
+              <th>Tipo</th>
+              <th>Tamanho</th>
+              <th>Atualizado</th>
+              <th className="text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredDocs.map((doc) => (
+              <tr key={doc.id} className="hover:bg-gray-50">
+                <td className="py-3 text-gray-700 truncate max-w-xs">
+                  {decodeFileName(doc.name)}
+                </td>
+                <td className="text-gray-700">{doc.category}</td>
+                <td className="text-gray-700">{doc.type}</td>
+                <td className="text-gray-700">{doc.size}</td>
+                <td className="text-gray-700">{doc.updated}</td>
+                <td className="py-3 text-right space-x-2">
+                  <a
+                    href={doc.url}
+                    download={doc.name}
+                    className="inline-block text-gray-500 hover:text-gray-700"
+                    aria-label={`Baixar ${doc.name}`}
+                  >
+                    <DownloadIcon className="w-4 h-4" />
+                  </a>
+                  <button 
+                    onClick={() => onDelete(doc.id)}
+                    aria-label={`Excluir ${doc.name}`}
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500 hover:text-red-600" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Bottom Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Recent Documents */}
+        <div className="bg-white rounded-2xl shadow p-4">
+          <h3 className="text-lg font-medium text-gray-800 mb-3">
+            Documentos Recentes
+          </h3>
+          <ul className="space-y-2 text-gray-700">
+            {recentDocuments.map((doc) => (
+              <li key={doc.id} className="flex justify-between">
+                <span>{decodeFileName(doc.name)}</span>
+                <span className="text-sm text-gray-500">{doc.updated}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-4rem)] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 relative z-20">
-          {files.map((file) => (
-            <div
-              key={file.id}
-              className="bg-white/10 border border-white/20 rounded-lg p-2 flex flex-col items-start hover:bg-white/20 transition relative"
-            >
-              <div className="absolute top-2 right-2 flex space-x-1">
-                <a
-                  href={file.url}
-                  download={file.name}
-                  title="Baixar arquivo"
-                  className="text-white/60 hover:text-white"
-                >
-                  <DownloadIcon className="w-4 h-4" />
-                </a>
-                <button onClick={() => startEdit(file.id, file.name)}>
-                  <Edit2 className="w-4 h-4 text-white/60 hover:text-white" />
-                </button>
-                <button onClick={() => onDelete(file.id)}>
-                  <Trash2 className="w-4 h-4 text-red-400 hover:text-red-600" />
-                </button>
-              </div>
-
-              <FileText className="w-5 h-5 text-purple-300 mb-1" />
-
-              {editingId === file.id ? (
-                <input
-                  className="w-full bg-transparent text-white text-sm mb-1 border-b border-white/50 outline-none"
-                  value={draftName}
-                  onChange={(e) => setDraftName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && confirmRename(file)}
-                  onBlur={() => confirmRename(file)}
-                  autoFocus
-                />
-              ) : (
-                <span className="block w-full overflow-hidden truncate text-white text-sm mb-1">
-                  {decodeFileName(file.name || file.url.split("/").pop() || "Sem nome")}
+        {/* Categories */}
+        <div className="bg-white rounded-2xl shadow p-4">
+          <h3 className="text-lg font-medium text-gray-800 mb-3">Categorias</h3>
+          <ul className="space-y-2 text-gray-700">
+            {categories.map((cat) => (
+              <li key={cat.name} className="flex justify-between">
+                <span>{cat.name}</span>
+                <span className="bg-gray-100 px-2 py-0.5 rounded-full text-sm text-gray-600">
+                  {cat.count}
                 </span>
-              )}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-              <span className="text-white/60 text-xs">{file.size}</span>
-            </div>
-          ))}
+        {/* Storage */}
+        <div className="bg-white rounded-2xl shadow p-4">
+          <h3 className="text-lg font-medium text-gray-800 mb-3">Armazenamento</h3>
+          <div className="flex items-baseline justify-center bg-gray-100 rounded-lg py-8 mb-4">
+            <span className="text-2xl font-semibold text-gray-800">
+              {storage.total}
+            </span>
+            <span className="ml-2 text-gray-500">Espaço utilizado</span>
+          </div>
+          <ul className="space-y-1 text-gray-700">
+            <li className="flex justify-between">
+              <span>PDFs</span>
+              <span>{storage.pdf}</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Documentos</span>
+              <span>{storage.docs}</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Planilhas</span>
+              <span>{storage.sheets}</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

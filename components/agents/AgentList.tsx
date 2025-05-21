@@ -19,17 +19,26 @@ interface Agent {
   lastUpdate: string;
 }
 
-const initialAgents: Agent[] = [
-  { id: "1", name: "Agente RH", status: "active", documentsCount: 24, lastUpdate: "2025-05-07T14:30:00" },
-  { id: "2", name: "Agente Financeiro", status: "active", documentsCount: 42, lastUpdate: "2025-05-06T10:15:00" },
-  { id: "3", name: "Agente Suporte", status: "inactive", documentsCount: 18, lastUpdate: "2025-05-05T16:45:00" },
-];
+const NEST_API_URL = "http://localhost:3001/api/v1";
 
 const AgentList: React.FC = () => {
-  const [agents, setAgents] = useState<Agent[]>(initialAgents);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState<{ title: string; description: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  React.useEffect(() => {
+    async function fetchAgents() {
+      try {
+        const res = await fetch(`${NEST_API_URL}/agents`);
+        const data = await res.json();
+        setAgents(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setToast({ title: "Erro", description: "Não foi possível carregar os agentes." });
+      }
+    }
+    fetchAgents();
+  }, [showModal]);
 
   const showToast = (title: string, description: string) => setToast({ title, description });
 

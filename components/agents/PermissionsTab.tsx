@@ -62,7 +62,7 @@ const PermissionsTab: React.FC<PermissionsTabProps> = ({
           >
             <option value="">Selecione um usuário...</option>
             {users.map((u) => (
-              <option key={u.id} value={u.name}>
+              <option key={u.id} value={u.id}>
                 {u.name}
               </option>
             ))}
@@ -110,7 +110,7 @@ const PermissionsTab: React.FC<PermissionsTabProps> = ({
           >
             <option value="">Selecione uma equipe...</option>
             {teams.map((t) => (
-              <option key={t.id} value={t.name}>
+              <option key={t.id} value={t.id}>
                 {t.name}
               </option>
             ))}
