@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import IntegrationTab from "./IntegrationTab";
 import { AgentData } from "./AgentForm";
+import { X, Plug } from "lucide-react";
+
 
 interface IntegrationModalProps {
   isOpen: boolean;
@@ -34,12 +36,24 @@ const IntegrationModal: React.FC<IntegrationModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/40 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-[700px] bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+      <div className="relative w-full max-w-[700px] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden animate-scaleIn">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          aria-label="Fechar"
+          type="button"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <div className="flex items-center gap-2 px-6 py-4 border-b">
+          <Plug className="w-5 h-5 text-purple-600" />
+          <h2 className="text-lg font-semibold text-gray-800">
             Integrações do agente {agent.name}
           </h2>
+        </div>
+        <div className="p-6 overflow-y-auto max-h-[70vh]">
+
           <IntegrationTab
             webhookUrl={webhookUrl}
             isWebhookActive={isWebhookActive}
