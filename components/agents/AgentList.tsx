@@ -26,6 +26,9 @@ const AgentList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState<{ title: string; description: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
+  const [editModal, setEditModal] = useState<{ show: boolean; agent: Agent | null }>({ show: false, agent: null });
+  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     async function fetchAgents() {
@@ -72,6 +75,45 @@ const AgentList: React.FC = () => {
         return agent;
       })
     );
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`${NEST_API_URL}/agents/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Erro ao excluir agente");
+      }
+      setAgents(prev => prev.filter(a => a.id !== id));
+      showToast("Agente excluído", "O agente foi excluído com sucesso.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao excluir agente";
+      showToast("Erro", msg);
+    } finally {
+      setDeleteModal({ show: false, agentId: null });
+    }
+  };
+
+  const handleEdit = async (agent: Agent, name: string) => {
+    try {
+      const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Erro ao editar agente");
+      }
+      setAgents(prev => prev.map(a => (a.id === agent.id ? { ...a, name } : a)));
+      showToast("Agente atualizado", `O agente ${name} foi atualizado.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao editar agente";
+      showToast("Erro", msg);
+    } finally {
+      setEditModal({ show: false, agent: null });
+      setNewName("");
+    }
   };
 
   return (
@@ -160,10 +202,19 @@ const AgentList: React.FC = () => {
                         {formatDate(agent.createdAt)}
                       </td>
                       <td className="px-3 py-4 text-center">
-                        <button className="text-purple-600 hover:text-purple-800 mr-3">
+                        <button
+                          onClick={() => {
+                            setEditModal({ show: true, agent });
+                            setNewName(agent.name);
+                          }}
+                          className="text-purple-600 hover:text-purple-800 mr-3"
+                        >
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button className="text-red-600 hover:text-red-800">
+                        <button
+                          onClick={() => setDeleteModal({ show: true, agentId: agent.id })}
+                          className="text-red-600 hover:text-red-800"
+                        >
                           <Trash className="w-4 h-4" />
                         </button>
                       </td>
@@ -174,6 +225,78 @@ const AgentList: React.FC = () => {
             </table>
           </div>
         </>
+      )}
+
+      {deleteModal.show && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl transform transition-all animate-scaleIn">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-red-50 rounded-full">
+                <Trash className="w-6 h-6 text-red-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Confirmar exclusão</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Tem certeza que deseja excluir este agente? Esta ação não pode ser desfeita.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteModal({ show: false, agentId: null })}
+                className="px-4 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => deleteModal.agentId && handleDelete(deleteModal.agentId)}
+                className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editModal.show && editModal.agent && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl transform transition-all animate-scaleIn">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-purple-50 rounded-full">
+                <Edit className="w-6 h-6 text-purple-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Editar agente</h3>
+            </div>
+            <div className="mb-6">
+              <label htmlFor="agentName" className="block text-sm font-medium text-gray-700 mb-2">
+                Nome do agente
+              </label>
+              <input
+                id="agentName"
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="w-full px-4 py-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setEditModal({ show: false, agent: null });
+                  setNewName("");
+                }}
+                className="px-4 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => editModal.agent && handleEdit(editModal.agent, newName)}
+                className="px-4 py-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <NewAgentModal isOpen={showModal} onClose={() => setShowModal(false)} />
