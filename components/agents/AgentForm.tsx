@@ -266,7 +266,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="px-5 py-4 bg-gray-50 border-b shrink-0">
+        <div className="px-12 py-4 bg-gray-50 border-b shrink-0">
           <div className="inline-flex bg-gray-200 rounded-lg p-1 overflow-x-auto">
             {tabs.map(t => {
               const isActive = t.value === activeTab;
