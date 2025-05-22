@@ -5,6 +5,7 @@ import IntegrationTab from "./IntegrationTab";
 import { AgentData } from "./AgentForm";
 import { X, Plug } from "lucide-react";
 
+
 interface IntegrationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -52,6 +53,7 @@ const IntegrationModal: React.FC<IntegrationModalProps> = ({
           </h2>
         </div>
         <div className="p-6 overflow-y-auto max-h-[70vh]">
+
           <IntegrationTab
             webhookUrl={webhookUrl}
             isWebhookActive={isWebhookActive}
