@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { Code as CodeIcon, Copy as CopyIcon } from 'lucide-react';
 import Switch from '@/components/ui/Switch';
-
-export interface WidgetTabProps {
-  widgetCode: string;
-  isWidgetActive: boolean;
-  onCopyWidgetCode(): void;
-  onWidgetToggle(active: boolean): void;
-}
+import type { WidgetTabProps } from '@/types/agents';
 
 const WidgetTab: React.FC<WidgetTabProps> = ({
   widgetCode,

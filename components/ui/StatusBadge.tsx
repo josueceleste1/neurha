@@ -1,10 +1,7 @@
 // components/agents/StatusBadge.tsx
 import React from "react";
 import { AgentStatus } from "@/types/agents";
-
-interface StatusBadgeProps {
-  status: AgentStatus;
-}
+import type { StatusBadgeProps } from "@/types/ui";
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const isActive = status === "Ativo";

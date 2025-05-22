@@ -1,17 +1,10 @@
 "use client";
 
 import React from "react";
-import AgentForm, { MyDocument, AgentData } from "./AgentForm";
+import AgentForm from "./AgentForm";
+import type { MyDocument, AgentData, EditAgentModalProps } from "@/types/agents";
 
 
-interface EditAgentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  agent: AgentData | null;
-  myDocuments?: MyDocument[];
-  onSaved?: () => void;
-
-}
 
 const EditAgentModal: React.FC<EditAgentModalProps> = ({
   isOpen,

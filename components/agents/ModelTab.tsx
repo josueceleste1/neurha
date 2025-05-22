@@ -1,27 +1,7 @@
 import React from "react";
 import Switch from "@/components/ui/Switch";
+import type { ModelOption, ModelTabProps } from "@/types/agents";
 
-export interface ModelOption {
-  value: string;
-  label: string;
-}
-
-export interface ModelTabProps {
-  provider: "openai" | "anthropic" | "ollama" | "grok" | "gemini" | "custom";
-  onProviderChange: (key: ModelTabProps['provider']) => void;
-  specificModel: string;
-  onSpecificModelChange: (value: string) => void;
-  temperature: number;
-  onTemperatureChange: (value: number) => void;
-  topK: string;
-  onTopKChange: (value: string) => void;
-  systemPrompt: string;
-  onSystemPromptChange: (value: string) => void;
-  vectorDb: "chroma" | "supabase" | "pinecone" | "qdrant" | "weaviate";
-  onVectorDbChange: (key: ModelTabProps['vectorDb']) => void;
-  apiKey: string;
-  onApiKeyChange: (value: string) => void;
-}
 
 // Modelos disponíveis por provedor
 // Garantimos que todas as chaves de `provider` possuam um array padrão

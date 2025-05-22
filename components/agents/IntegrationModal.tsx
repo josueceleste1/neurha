@@ -6,13 +6,7 @@ import WebhookTab from "./WebhookTab";
 import ApiTab from "./ApiTab";
 import WidgetTab from "./WidgetTab";
 import ExternalTab from "./ExternalTab";
-import { AgentData } from "./AgentForm";
-
-interface IntegrationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  agent: AgentData | null;
-}
+import type { AgentData, IntegrationModalProps } from "@/types/agents";
 
 type Tab = "webhook" | "api" | "widget" | "external";
 const tabs: { value: Tab; label: string; icon: React.ReactNode }[] = [

@@ -1,18 +1,7 @@
 import React, { ChangeEvent, useRef } from "react";
 import { Upload, Database as DatabaseIcon, FileText } from "lucide-react";
-import type { MyDocument } from "@/components/agents/AgentForm";
+import type { MyDocument, KnowledgeTabProps } from "@/types/agents";
 
-export interface KnowledgeTabProps {
-  onFilesChange: (files: FileList | null) => void;
-  sourceUrl: string;
-  onSourceUrlChange: (value: string) => void;
-  onAddUrl: () => void;
-  myDocuments: MyDocument[];
-  selectedDocs: string[];
-  onSelectedDocsChange: (docs: string[]) => void;
-  onConnectSharePoint: () => void;
-  onConnectGoogleDrive: () => void;
-}
 
 const labelClasses = "block text-sm font-medium text-gray-700 mb-1";
 const inputClasses = "mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/40 transition-all";

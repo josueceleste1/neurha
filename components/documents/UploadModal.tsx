@@ -1,23 +1,6 @@
 import React from "react";
 import { UploadCloud, X } from "lucide-react";
-
-interface UploadModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (formData: FormData) => Promise<void>;
-  uploadData: {
-    name: string;
-    category: string;
-    description: string;
-    file: File | null;
-  };
-  setUploadData: React.Dispatch<React.SetStateAction<{
-    name: string;
-    category: string;
-    description: string;
-    file: File | null;
-  }>>;
-}
+import type { UploadModalProps } from "@/types/documents";
 
 const UploadModal: React.FC<UploadModalProps> = ({ open, onClose, onSubmit, uploadData, setUploadData }) => {
   if (!open) return null;

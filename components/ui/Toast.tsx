@@ -1,11 +1,6 @@
 import React, { useEffect } from "react";
 import { X } from "lucide-react"; // ícone de fechar
-
-interface ToastProps {
-  title: string;
-  description: string;
-  onClose: () => void;
-}
+import type { ToastProps } from "@/types/ui";
 
 const Toast: React.FC<ToastProps> = ({ title, description, onClose }) => {
   useEffect(() => {

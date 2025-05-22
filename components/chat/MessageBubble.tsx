@@ -1,11 +1,7 @@
 // components/chat/MessageBubble.tsx
 import React, { FC } from "react";
 import { Bot, User } from "lucide-react";
-import { Message } from "@/hooks/useChat";
-
-interface MessageBubbleProps {
-  message: Message;
-}
+import type { Message, MessageBubbleProps } from "@/types/chat";
 
 const MessageBubble: FC<MessageBubbleProps> = ({ message }) => {
   const isUser = message.from === "user";

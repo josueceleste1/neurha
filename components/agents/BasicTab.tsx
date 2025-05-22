@@ -1,16 +1,6 @@
 import React from "react";
 import Switch from "@/components/ui/Switch";
-
-export interface BasicTabProps {
-  name: string;
-  onNameChange: (value: string) => void;
-  description: string;
-  onDescriptionChange: (value: string) => void;
-  tags: string;
-  onTagsChange: (value: string) => void;
-  status: "active" | "inactive";
-  onStatusChange: (value: "active" | "inactive") => void;
-}
+import type { BasicTabProps } from "@/types/agents";
 
 const labelClasses = "block text-sm font-medium text-gray-700 mb-1.5";
 const inputClasses =

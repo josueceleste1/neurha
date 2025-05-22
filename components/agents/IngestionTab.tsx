@@ -1,15 +1,5 @@
 import React from "react";
-
-export interface IngestionTabProps {
-  cron: string;
-  onCronChange: (value: string) => void;
-  chunkSize: string;
-  onChunkSizeChange: (value: string) => void;
-  chunkOverlap: string;
-  onChunkOverlapChange: (value: string) => void;
-  embeddingModel: string;
-  onEmbeddingModelChange: (value: string) => void;
-}
+import type { IngestionTabProps } from "@/types/agents";
 
 const labelClasses = "block text-sm font-medium text-gray-700 mb-1.5";
 const inputClasses =

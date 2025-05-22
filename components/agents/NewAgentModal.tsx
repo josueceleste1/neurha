@@ -2,13 +2,8 @@
 "use client";
 
 import React from "react";
-import AgentForm, { MyDocument } from "./AgentForm";
-
-interface NewAgentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  myDocuments?: MyDocument[];
-}
+import AgentForm from "./AgentForm";
+import type { MyDocument, NewAgentModalProps } from "@/types/agents";
 
 const NewAgentModal: React.FC<NewAgentModalProps> = ({
   isOpen,
