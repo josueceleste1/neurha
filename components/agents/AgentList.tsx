@@ -30,6 +30,7 @@ const AgentList: React.FC = () => {
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
   const [agentToEdit, setAgentToEdit] = useState<Agent | null>(null);
 
+
   const fetchAgents = async () => {
     try {
       const res = await fetch(`${NEST_API_URL}/agents`);
@@ -94,7 +95,6 @@ const AgentList: React.FC = () => {
       setDeleteModal({ show: false, agentId: null });
     }
   };
-
 
   return (
     <div className="w-full p-6 bg-white rounded-xl shadow-md border border-gray-200">
@@ -234,13 +234,13 @@ const AgentList: React.FC = () => {
         </div>
       )}
 
-
       <EditAgentModal
         isOpen={!!agentToEdit}
         onClose={() => setAgentToEdit(null)}
         agent={agentToEdit}
         onSaved={() => setAgentToEdit(null)}
       />
+
 
       <NewAgentModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>

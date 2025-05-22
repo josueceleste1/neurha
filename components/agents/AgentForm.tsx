@@ -29,6 +29,7 @@ interface AgentFormProps {
   mode?: "create" | "edit";
   agent?: AgentData | null;
   onSave?: () => void;
+
 }
 
 interface ToastData { title: string; description: string; }
@@ -118,6 +119,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
       setTags(agent.tags ?? "");
       setStatus(agent.status ?? "active");
       setSelectedDocs(agent.documentIds ?? []);
+
     }
   }, [mode, agent]);
 
@@ -178,8 +180,8 @@ const AgentForm: React.FC<AgentFormProps> = ({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     const agenteParaCriar = {
+
       name,
       description,
       tags,
@@ -207,8 +209,13 @@ const AgentForm: React.FC<AgentFormProps> = ({
       isWidgetActive,
       sourceUrl,
     };
+    
     console.log("Dados do agente a ser salvo:", agenteParaCriar);
-
+    
+    const url = mode === 'edit' && agent?.id
+      ? `${NEST_API_URL}/agents/${agent.id}`
+      : `${NEST_API_URL}/agents`;
+    const method = mode === 'edit' && agent?.id ? 'PATCH' : 'POST';
     try {
       if (mode === "edit" && agent) {
         const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`, {
@@ -249,6 +256,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
       onCancel();
     } catch (err) {
       setToastData({ title: "Erro", description: "Não foi possível salvar o agente." });
+
     }
   }
 
@@ -287,7 +295,9 @@ const AgentForm: React.FC<AgentFormProps> = ({
           <button type="button" onClick={onCancel} className="text-gray-700 hover:text-gray-900">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="ml-4 text-lg font-semibold">Criar Novo Agente</h1>
+          <h1 className="ml-4 text-lg font-semibold">
+            {mode === "edit" ? "Editar Agente" : "Criar Novo Agente"}
+          </h1>
         </div>
 
         {/* Tabs */}
@@ -423,7 +433,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
             </button>
           ) : (
             <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
-              Criar Agente
+              {mode === "edit" ? "Salvar Alterações" : "Criar Agente"}
             </button>
           )}
         </div>
