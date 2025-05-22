@@ -1,14 +1,16 @@
 "use client";
 
 import React from "react";
-import AgentForm, { MyDocument } from "./AgentForm";
+import AgentForm, { MyDocument, AgentData } from "./AgentForm";
+
 
 interface EditAgentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  agent: any;
+  agent: AgentData | null;
   myDocuments?: MyDocument[];
-  onUpdated?: () => void;
+  onSaved?: () => void;
+
 }
 
 const EditAgentModal: React.FC<EditAgentModalProps> = ({
@@ -16,20 +18,20 @@ const EditAgentModal: React.FC<EditAgentModalProps> = ({
   onClose,
   agent,
   myDocuments = [],
-  onUpdated,
+  onSaved,
 }) => {
-  if (!isOpen) return null;
+  if (!isOpen || !agent) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/40 backdrop-blur-sm overflow-y-auto">
-      <div
-        className="w-full max-w-[900px] max-h-[90vh] bg-white rounded-xl shadow-lg overflow-hidden"
-      >
+      <div className="w-full max-w-[900px] max-h-[90vh] bg-white rounded-xl shadow-lg overflow-hidden">
+
         <AgentForm
           onCancel={onClose}
           myDocuments={myDocuments}
           mode="edit"
           agent={agent}
-          onSuccess={onUpdated}
+          onSave={onSaved}
         />
       </div>
     </div>

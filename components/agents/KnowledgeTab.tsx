@@ -4,8 +4,8 @@ import type { MyDocument } from "@/components/agents/AgentForm";
 
 export interface KnowledgeTabProps {
   onFilesChange: (files: FileList | null) => void;
-  url: string;
-  onUrlChange: (value: string) => void;
+  sourceUrl: string;
+  onSourceUrlChange: (value: string) => void;
   onAddUrl: () => void;
   myDocuments: MyDocument[];
   selectedDocs: string[];
@@ -20,8 +20,8 @@ const helperTextClasses = "mt-1 text-xs text-gray-500";
 
 const KnowledgeTab: React.FC<KnowledgeTabProps> = ({
   onFilesChange,
-  url,
-  onUrlChange,
+  sourceUrl,
+  onSourceUrlChange,
   onAddUrl,
   myDocuments,
   selectedDocs,
@@ -114,8 +114,8 @@ const KnowledgeTab: React.FC<KnowledgeTabProps> = ({
         <div className="flex gap-2">
           <input
             type="url"
-            value={url}
-            onChange={e => onUrlChange(e.target.value)}
+            value={sourceUrl}
+            onChange={e => onSourceUrlChange(e.target.value)}
             placeholder="https://site.com/documento"
             className={inputClasses}
           />

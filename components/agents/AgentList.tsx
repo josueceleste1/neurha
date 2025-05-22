@@ -28,8 +28,8 @@ const AgentList: React.FC = () => {
   const [toast, setToast] = useState<{ title: string; description: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
-  const [editModal, setEditModal] = useState<{ show: boolean; agent: Agent | null }>({ show: false, agent: null });
-  const [newName, setNewName] = useState("");
+  const [agentToEdit, setAgentToEdit] = useState<Agent | null>(null);
+
 
   const fetchAgents = async () => {
     try {
@@ -43,7 +43,7 @@ const AgentList: React.FC = () => {
 
   useEffect(() => {
     fetchAgents();
-  }, [showModal]);
+  }, [showModal, agentToEdit]);
 
   const showToast = (title: string, description: string) => setToast({ title, description });
 
@@ -93,20 +93,6 @@ const AgentList: React.FC = () => {
       showToast("Erro", msg);
     } finally {
       setDeleteModal({ show: false, agentId: null });
-    }
-  };
-
-  const openEditModal = async (agent: Agent) => {
-    try {
-      const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setEditModal({ show: true, agent: { ...agent, ...data } });
-      } else {
-        throw new Error("Erro ao carregar agente");
-      }
-    } catch {
-      showToast("Erro", "Não foi possível carregar o agente para edição.");
     }
   };
 
@@ -197,7 +183,7 @@ const AgentList: React.FC = () => {
                       </td>
                       <td className="px-3 py-4 text-center">
                         <button
-                          onClick={() => openEditModal(agent)}
+                          onClick={() => setAgentToEdit(agent)}
                           className="text-purple-600 hover:text-purple-800 mr-3"
                         >
                           <Edit className="w-4 h-4" />
@@ -248,17 +234,13 @@ const AgentList: React.FC = () => {
         </div>
       )}
 
-      {editModal.show && editModal.agent && (
-        <EditAgentModal
-          isOpen={editModal.show}
-          onClose={() => setEditModal({ show: false, agent: null })}
-          agent={editModal.agent}
-          onUpdated={() => {
-            setEditModal({ show: false, agent: null });
-            fetchAgents();
-          }}
-        />
-      )}
+      <EditAgentModal
+        isOpen={!!agentToEdit}
+        onClose={() => setAgentToEdit(null)}
+        agent={agentToEdit}
+        onSaved={() => setAgentToEdit(null)}
+      />
+
 
       <NewAgentModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>
