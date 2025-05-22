@@ -8,11 +8,10 @@ import KnowledgeTab from "./KnowledgeTab";
 import IngestionTab from "./IngestionTab";
 import ModelTab from "@/components/agents/ModelTab";
 import PermissionsTab from "@/components/agents/PermissionsTab";
-import IntegrationTab from "@/components/agents/IntegrationTab";
 import { MOCK_USERS, MOCK_TEAMS } from "@/mocks/mockData";
 
 export interface MyDocument { id: string; name: string; }
-type Tab = "basic" | "knowledge" | "ingestion" | "model" | "permissions" | "integration";
+type Tab = "basic" | "knowledge" | "ingestion" | "model" | "permissions";
 
 export interface AgentData {
   id: string;
@@ -40,7 +39,6 @@ const tabs: { value: Tab; label: string }[] = [
   { value: "ingestion", label: "Configuração de Ingestão" },
   { value: "model", label: "Configuração LLM" },
   { value: "permissions", label: "Permissões" },
-  { value: "integration", label: "Integrações" },
 ];
 
 const NEST_API_URL = "http://localhost:3001/api/v1";
@@ -86,13 +84,6 @@ const AgentForm: React.FC<AgentFormProps> = ({
   const [teamSearch, setTeamSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
-  // Integration
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [isWebhookActive, setIsWebhookActive] = useState(false);
-  const [apiToken, setApiToken] = useState("");
-  const [isApiActive, setIsApiActive] = useState(false);
-  const widgetCode = `<script src="https://api.agentes.ai/widget/SEU_AGENT_ID"></script>`;
-  const [isWidgetActive, setIsWidgetActive] = useState(false);
 
   // Toast
   const [toastData, setToastData] = useState<ToastData | null>(null);
@@ -124,16 +115,6 @@ const AgentForm: React.FC<AgentFormProps> = ({
   }, [mode, agent]);
 
   // Helpers
-  function generateApiToken() {
-    const token = Math.random().toString(36).substring(2, 10);
-    setApiToken(token);
-    setToastData({ title: "Token gerado", description: token });
-  }
-
-  function copyWidgetCode() {
-    navigator.clipboard.writeText(widgetCode);
-    setToastData({ title: "Código copiado", description: "Código do widget copiado." });
-  }
 
   function handleFiles(files: FileList | null) {
     if (files) setUploadFiles(prev => [...prev, ...Array.from(files)]);
@@ -201,12 +182,6 @@ const AgentForm: React.FC<AgentFormProps> = ({
       apiKey,
       selectedUsers,
       selectedTeams,
-      webhookUrl,
-      isWebhookActive,
-      apiToken,
-      isApiActive,
-      widgetCode,
-      isWidgetActive,
       sourceUrl,
     };
     
@@ -264,16 +239,6 @@ const AgentForm: React.FC<AgentFormProps> = ({
     setToastData(null);
   }
 
-  const handleWebhookToggle = (active: boolean) => {
-    setIsWebhookActive(active);
-  };
-  const handleApiToggle = (active: boolean) => {
-    setIsApiActive(active);
-  };
-
-  const handleWidgetToggle = (active: boolean) => {
-    setIsWidgetActive(active);
-  };
 
   const currentIndex = tabs.findIndex(t => t.value === activeTab);
   const goNext = () => currentIndex < tabs.length - 1 && setActiveTab(tabs[currentIndex + 1].value);
@@ -391,24 +356,6 @@ const AgentForm: React.FC<AgentFormProps> = ({
               selectedTeams={selectedTeams}
               onRemoveTeam={team => setSelectedTeams(prev => prev.filter(t => t !== team))}
               teams={MOCK_TEAMS}
-            />
-          )}
-          {activeTab === "integration" && (
-            <IntegrationTab
-              webhookUrl={webhookUrl}
-              isWebhookActive={isWebhookActive}
-              onWebhookUrlChange={setWebhookUrl}
-              onWebhookToggle={handleWebhookToggle}
-
-              apiToken={apiToken}
-              isApiActive={isApiActive}
-              onGenerateToken={generateApiToken}
-              onApiToggle={handleApiToggle}
-
-              widgetCode={widgetCode}
-              isWidgetActive={isWidgetActive}
-              onCopyWidgetCode={copyWidgetCode}
-              onWidgetToggle={handleWidgetToggle}
             />
           )}
         </div>
