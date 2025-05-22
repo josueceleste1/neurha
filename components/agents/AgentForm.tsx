@@ -17,6 +17,10 @@ type Tab = "basic" | "knowledge" | "ingestion" | "model" | "permissions" | "inte
 interface AgentFormProps {
   onCancel: () => void;
   myDocuments: MyDocument[];
+  /** quando fornecido, o formulário funciona em modo de edição */
+  mode?: "create" | "edit";
+  agent?: any;
+  onSuccess?: () => void;
 }
 
 interface ToastData { title: string; description: string; }
@@ -32,7 +36,13 @@ const tabs: { value: Tab; label: string }[] = [
 
 const NEST_API_URL = "http://localhost:3001/api/v1";
 
-const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
+const AgentForm: React.FC<AgentFormProps> = ({
+  onCancel,
+  myDocuments,
+  mode = "create",
+  agent,
+  onSuccess,
+}) => {
   const [activeTab, setActiveTab] = useState<Tab>("basic");
   // Basic
   const [name, setName] = useState("");
@@ -88,6 +98,19 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
     }
     fetchDocuments();
   }, []);
+
+  // Quando em modo de edição, popula os campos com os dados do agente
+  useEffect(() => {
+    if (mode === "edit" && agent) {
+      setName(agent.name || "");
+      setDescription(agent.description || "");
+      setTags(agent.tags || "");
+      setStatus(agent.status || "active");
+      if (Array.isArray(agent.documentIds)) {
+        setSelectedDocs(agent.documentIds);
+      }
+    }
+  }, [mode, agent]);
 
   // Helpers
   function generateApiToken() {
@@ -146,9 +169,8 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     // Log dos dados do agente antes de enviar para a API
-    const agenteParaCriar = {
+    const agentPayload = {
       name,
       description,
       tags,
@@ -176,25 +198,36 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
       isWidgetActive,
       url,
     };
-    console.log('Dados do agente a ser criado:', agenteParaCriar);
+    console.log('Payload do agente:', agentPayload);
 
+    const url = mode === 'edit' && agent?.id
+      ? `${NEST_API_URL}/agents/${agent.id}`
+      : `${NEST_API_URL}/agents`;
+    const method = mode === 'edit' && agent?.id ? 'PATCH' : 'POST';
     try {
-      const res = await fetch(`${NEST_API_URL}/agents`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
           description,
           tags,
           status,
-          documentIds: selectedDocs, 
+          documentIds: selectedDocs,
         }),
       });
-      if (!res.ok) throw new Error("Erro ao criar agente");
-      setToastData({ title: "Agente criado", description: `O agente ${name} foi cadastrado com sucesso.` });
-      onCancel(); // Fecha o modal após criar
+      if (!res.ok) throw new Error('Erro ao salvar agente');
+      setToastData({
+        title: mode === 'edit' ? 'Agente atualizado' : 'Agente criado',
+        description:
+          mode === 'edit'
+            ? `O agente ${name} foi atualizado com sucesso.`
+            : `O agente ${name} foi cadastrado com sucesso.`,
+      });
+      onCancel();
+      onSuccess && onSuccess();
     } catch (err) {
-      setToastData({ title: "Erro", description: "Não foi possível criar o agente." });
+      setToastData({ title: 'Erro', description: 'Não foi possível salvar o agente.' });
     }
   }
 
@@ -233,7 +266,9 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
           <button type="button" onClick={onCancel} className="text-gray-700 hover:text-gray-900">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="ml-4 text-lg font-semibold">Criar Novo Agente</h1>
+          <h1 className="ml-4 text-lg font-semibold">
+            {mode === "edit" ? "Editar Agente" : "Criar Novo Agente"}
+          </h1>
         </div>
 
         {/* Tabs */}
@@ -369,7 +404,7 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
             </button>
           ) : (
             <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
-              Criar Agente
+              {mode === "edit" ? "Salvar Alterações" : "Criar Agente"}
             </button>
           )}
         </div>

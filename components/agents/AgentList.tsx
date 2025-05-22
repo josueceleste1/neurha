@@ -10,6 +10,7 @@ import {
 import Switch from "@/components/ui/Switch";
 import Toast from "@/components/ui/Toast";
 import NewAgentModal from "./NewAgentModal";
+import EditAgentModal from "./EditAgentModal";
 
 interface Agent {
   id: string;
@@ -30,16 +31,17 @@ const AgentList: React.FC = () => {
   const [editModal, setEditModal] = useState<{ show: boolean; agent: Agent | null }>({ show: false, agent: null });
   const [newName, setNewName] = useState("");
 
-  useEffect(() => {
-    async function fetchAgents() {
-      try {
-        const res = await fetch(`${NEST_API_URL}/agents`);
-        const data = await res.json();
-        setAgents(Array.isArray(data) ? data : []);
-      } catch {
-        setToast({ title: "Erro", description: "Não foi possível carregar os agentes." });
-      }
+  const fetchAgents = async () => {
+    try {
+      const res = await fetch(`${NEST_API_URL}/agents`);
+      const data = await res.json();
+      setAgents(Array.isArray(data) ? data : []);
+    } catch {
+      setToast({ title: "Erro", description: "Não foi possível carregar os agentes." });
     }
+  };
+
+  useEffect(() => {
     fetchAgents();
   }, [showModal]);
 
@@ -94,25 +96,17 @@ const AgentList: React.FC = () => {
     }
   };
 
-  const handleEdit = async (agent: Agent, name: string) => {
+  const openEditModal = async (agent: Agent) => {
     try {
-      const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name })
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Erro ao editar agente");
+      const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setEditModal({ show: true, agent: { ...agent, ...data } });
+      } else {
+        throw new Error("Erro ao carregar agente");
       }
-      setAgents(prev => prev.map(a => (a.id === agent.id ? { ...a, name } : a)));
-      showToast("Agente atualizado", `O agente ${name} foi atualizado.`);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Erro ao editar agente";
-      showToast("Erro", msg);
-    } finally {
-      setEditModal({ show: false, agent: null });
-      setNewName("");
+    } catch {
+      showToast("Erro", "Não foi possível carregar o agente para edição.");
     }
   };
 
@@ -203,10 +197,7 @@ const AgentList: React.FC = () => {
                       </td>
                       <td className="px-3 py-4 text-center">
                         <button
-                          onClick={() => {
-                            setEditModal({ show: true, agent });
-                            setNewName(agent.name);
-                          }}
+                          onClick={() => openEditModal(agent)}
                           className="text-purple-600 hover:text-purple-800 mr-3"
                         >
                           <Edit className="w-4 h-4" />
@@ -258,45 +249,15 @@ const AgentList: React.FC = () => {
       )}
 
       {editModal.show && editModal.agent && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl transform transition-all animate-scaleIn">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 bg-purple-50 rounded-full">
-                <Edit className="w-6 h-6 text-purple-500" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">Editar agente</h3>
-            </div>
-            <div className="mb-6">
-              <label htmlFor="agentName" className="block text-sm font-medium text-gray-700 mb-2">
-                Nome do agente
-              </label>
-              <input
-                id="agentName"
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              />
-            </div>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => {
-                  setEditModal({ show: false, agent: null });
-                  setNewName("");
-                }}
-                className="px-4 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-gray-900"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => editModal.agent && handleEdit(editModal.agent, newName)}
-                className="px-4 py-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700"
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditAgentModal
+          isOpen={editModal.show}
+          onClose={() => setEditModal({ show: false, agent: null })}
+          agent={editModal.agent}
+          onUpdated={() => {
+            setEditModal({ show: false, agent: null });
+            fetchAgents();
+          }}
+        />
       )}
 
       <NewAgentModal isOpen={showModal} onClose={() => setShowModal(false)} />
