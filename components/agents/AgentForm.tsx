@@ -14,9 +14,21 @@ import { MOCK_USERS, MOCK_TEAMS } from "@/mocks/mockData";
 export interface MyDocument { id: string; name: string; }
 type Tab = "basic" | "knowledge" | "ingestion" | "model" | "permissions" | "integration";
 
+export interface AgentData {
+  id: string;
+  name: string;
+  description?: string;
+  tags?: string;
+  status?: "active" | "inactive";
+  documentIds?: string[];
+}
+
 interface AgentFormProps {
   onCancel: () => void;
   myDocuments: MyDocument[];
+  mode?: "create" | "edit";
+  agent?: AgentData | null;
+  onSave?: () => void;
 }
 
 interface ToastData { title: string; description: string; }
@@ -32,17 +44,27 @@ const tabs: { value: Tab; label: string }[] = [
 
 const NEST_API_URL = "http://localhost:3001/api/v1";
 
-const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
+const AgentForm: React.FC<AgentFormProps> = ({
+  onCancel,
+  myDocuments,
+  mode = "create",
+  agent,
+  onSave,
+}) => {
   const [activeTab, setActiveTab] = useState<Tab>("basic");
   // Basic
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState("");
-  const [status, setStatus] = useState<"active" | "inactive">("active");
+  const [name, setName] = useState(agent?.name ?? "");
+  const [description, setDescription] = useState(agent?.description ?? "");
+  const [tags, setTags] = useState(agent?.tags ?? "");
+  const [status, setStatus] = useState<"active" | "inactive">(
+    agent?.status ?? "active"
+  );
   // Knowledge
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
-  const [url, setUrl] = useState("");
-  const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [selectedDocs, setSelectedDocs] = useState<string[]>(
+    agent?.documentIds ?? []
+  );
   // Ingestion
   const [cron, setCron] = useState("*/30 * * * *");
   const [chunkSize, setChunkSize] = useState("500");
@@ -89,6 +111,16 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
     fetchDocuments();
   }, []);
 
+  useEffect(() => {
+    if (mode === "edit" && agent) {
+      setName(agent.name ?? "");
+      setDescription(agent.description ?? "");
+      setTags(agent.tags ?? "");
+      setStatus(agent.status ?? "active");
+      setSelectedDocs(agent.documentIds ?? []);
+    }
+  }, [mode, agent]);
+
   // Helpers
   function generateApiToken() {
     const token = Math.random().toString(36).substring(2, 10);
@@ -106,9 +138,9 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
   }
 
   function handleAddUrl() {
-    if (url) {
-      setToastData({ title: "URL adicionada", description: url });
-      setUrl("");
+    if (sourceUrl) {
+      setToastData({ title: "URL adicionada", description: sourceUrl });
+      setSourceUrl("");
     }
   }
 
@@ -147,7 +179,6 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Log dos dados do agente antes de enviar para a API
     const agenteParaCriar = {
       name,
       description,
@@ -174,27 +205,50 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
       isApiActive,
       widgetCode,
       isWidgetActive,
-      url,
+      sourceUrl,
     };
-    console.log('Dados do agente a ser criado:', agenteParaCriar);
+    console.log("Dados do agente a ser salvo:", agenteParaCriar);
 
     try {
-      const res = await fetch(`${NEST_API_URL}/agents`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          description,
-          tags,
-          status,
-          documentIds: selectedDocs, 
-        }),
-      });
-      if (!res.ok) throw new Error("Erro ao criar agente");
-      setToastData({ title: "Agente criado", description: `O agente ${name} foi cadastrado com sucesso.` });
-      onCancel(); // Fecha o modal após criar
+      if (mode === "edit" && agent) {
+        const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            description,
+            tags,
+            status,
+            documentIds: selectedDocs,
+          }),
+        });
+        if (!res.ok) throw new Error("Erro ao atualizar agente");
+        setToastData({
+          title: "Agente atualizado",
+          description: `O agente ${name} foi atualizado com sucesso.`,
+        });
+      } else {
+        const res = await fetch(`${NEST_API_URL}/agents`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            description,
+            tags,
+            status,
+            documentIds: selectedDocs,
+          }),
+        });
+        if (!res.ok) throw new Error("Erro ao criar agente");
+        setToastData({
+          title: "Agente criado",
+          description: `O agente ${name} foi cadastrado com sucesso.`,
+        });
+      }
+      onSave?.();
+      onCancel();
     } catch (err) {
-      setToastData({ title: "Erro", description: "Não foi possível criar o agente." });
+      setToastData({ title: "Erro", description: "Não foi possível salvar o agente." });
     }
   }
 
@@ -273,8 +327,8 @@ const AgentForm: React.FC<AgentFormProps> = ({ onCancel, myDocuments }) => {
           {activeTab === "knowledge" && (
             <KnowledgeTab
               onFilesChange={handleFiles}
-              url={url}
-              onUrlChange={setUrl}
+              sourceUrl={sourceUrl}
+              onSourceUrlChange={setSourceUrl}
               onAddUrl={handleAddUrl}
               myDocuments={availableDocuments}
               selectedDocs={selectedDocs}
