@@ -132,7 +132,7 @@ export default function DocumentManagementPage({
           <thead>
             <tr className="text-gray-500 text-sm border-b">
               <th className="py-2">Nome do Documento</th>
-              <th>Categoría</th>
+              <th>Categoria</th>
               <th>Tipo</th>
               <th>Tamanho</th>
               <th>Atualizado</th>
