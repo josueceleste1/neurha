@@ -8,6 +8,7 @@ import WidgetTab from "./WidgetTab";
 import ExternalTab from "./ExternalTab";
 import { AgentData } from "./AgentForm";
 
+
 interface IntegrationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -22,6 +23,7 @@ const tabs: { value: Tab; label: string }[] = [
   { value: "external", label: "Integra\u00e7\u00f5es Externas" },
 ];
 
+
 const IntegrationModal: React.FC<IntegrationModalProps> = ({
   isOpen,
   onClose,
@@ -30,7 +32,6 @@ const IntegrationModal: React.FC<IntegrationModalProps> = ({
   if (!isOpen || !agent) return null;
 
   const [activeTab, setActiveTab] = useState<Tab>("webhook");
-
   const [webhookUrl, setWebhookUrl] = useState("");
   const [isWebhookActive, setIsWebhookActive] = useState(false);
   const [apiToken, setApiToken] = useState("");
@@ -107,6 +108,7 @@ const IntegrationModal: React.FC<IntegrationModalProps> = ({
 
         {/* Footer */}
         <div className="flex justify-end gap-3 bg-gray-50 px-8 py-4 border-t border-gray-200 shrink-0">
+
           <button
             type="button"
             onClick={onClose}
