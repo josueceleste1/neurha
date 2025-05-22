@@ -24,13 +24,16 @@ export interface ModelTabProps {
 }
 
 // Modelos disponíveis por provedor
-const PROVIDER_MODELS: Record<string, ModelOption[]> = {
+// Garantimos que todas as chaves de `provider` possuam um array padrão
+const PROVIDER_MODELS: Record<ModelTabProps['provider'], ModelOption[]> = {
   openai: [
     { value: "GPT-4o", label: "GPT-4o" },
     { value: "GPT-3.5-Turbo", label: "GPT-3.5-Turbo" },
   ],
   anthropic: [{ value: "Claude 3", label: "Claude 3" }],
   ollama: [{ value: "ollama-model", label: "Ollama Model" }],
+  gemini: [{ value: "Gemini-1.5-Pro", label: "Gemini-1.5-Pro" }],
+  grok: [{ value: "Grok-1.5-Pro", label: "Grok-1.5-Pro" }],
   custom: [{ value: "custom-model", label: "API Personalizada" }],
 };
 
@@ -111,7 +114,7 @@ const ModelTab: React.FC<ModelTabProps> = ({
         onChange={e => onSpecificModelChange(e.target.value)}
         className={inputClasses}
       >
-        {PROVIDER_MODELS[provider].map(model => (
+        {(PROVIDER_MODELS[provider] ?? []).map(model => (
           <option key={model.value} value={model.value}>
             {model.label}
           </option>
