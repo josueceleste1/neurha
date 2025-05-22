@@ -6,11 +6,13 @@ import {
   Database,
   Search,
   PlusCircle,
+  Plug,
 } from "lucide-react";
 import Switch from "@/components/ui/Switch";
 import Toast from "@/components/ui/Toast";
 import NewAgentModal from "./NewAgentModal";
 import EditAgentModal from "./EditAgentModal";
+import IntegrationModal from "./IntegrationModal";
 
 interface Agent {
   id: string;
@@ -29,6 +31,7 @@ const AgentList: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
   const [agentToEdit, setAgentToEdit] = useState<Agent | null>(null);
+  const [agentForIntegration, setAgentForIntegration] = useState<Agent | null>(null);
 
 
   const fetchAgents = async () => {
@@ -43,7 +46,7 @@ const AgentList: React.FC = () => {
 
   useEffect(() => {
     fetchAgents();
-  }, [showModal, agentToEdit]);
+  }, [showModal, agentToEdit, agentForIntegration]);
 
   const showToast = (title: string, description: string) => setToast({ title, description });
 
@@ -189,6 +192,12 @@ const AgentList: React.FC = () => {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => setAgentForIntegration(agent)}
+                          className="text-blue-600 hover:text-blue-800 mr-3"
+                        >
+                          <Plug className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => setDeleteModal({ show: true, agentId: agent.id })}
                           className="text-red-600 hover:text-red-800"
                         >
@@ -241,6 +250,11 @@ const AgentList: React.FC = () => {
         onSaved={() => setAgentToEdit(null)}
       />
 
+      <IntegrationModal
+        isOpen={!!agentForIntegration}
+        onClose={() => setAgentForIntegration(null)}
+        agent={agentForIntegration}
+      />
 
       <NewAgentModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>
