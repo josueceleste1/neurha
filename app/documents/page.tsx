@@ -24,30 +24,10 @@ import UploadModal from '@/components/documents/UploadModal';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { getFileType, formatFileSize } from '@/utils/fileUtils';
+import type { DocumentItem, CategoryCount, StorageStats } from '@/types/documents';
 
 const NEST_API_URL = "http://localhost:3001/api/v1";
 
-export interface DocumentItem {
-  id: string;
-  name: string;
-  category: string;
-  type: string;
-  size: string;
-  updated: string;
-  url: string;
-}
-
-export interface CategoryCount {
-  name: string;
-  count: number;
-}
-
-export interface StorageStats {
-  total: string;
-  pdf: string;
-  docs: string;
-  sheets: string;
-}
 
 const DocumentsPage: FC = () => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);

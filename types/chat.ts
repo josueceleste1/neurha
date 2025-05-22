@@ -23,5 +23,19 @@ export interface Message {
   
   export interface MessageBubbleProps {
     message: Message;
-  }  
+  }
+
+export interface Assistant {
+  id: string;
+  name: string;
+  description: string;
+  greeting: string;
+}
+
+export interface ChatHistory {
+  id: string;
+  title: string;
+  date: string;
+  assistantId: string;
+}
   

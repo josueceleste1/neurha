@@ -13,25 +13,18 @@ import Toast from "@/components/ui/Toast";
 import NewAgentModal from "./NewAgentModal";
 import EditAgentModal from "./EditAgentModal";
 import IntegrationModal from "./IntegrationModal";
-
-interface Agent {
-  id: string;
-  name: string;
-  status: "active" | "inactive";
-  documentsCount: number;
-  createdAt: string; 
-}
+import type { AgentListItem } from "@/types/agents";
 
 const NEST_API_URL = "http://localhost:3001/api/v1";
 
 const AgentList: React.FC = () => {
-  const [agents, setAgents] = useState<Agent[]>([]);
+  const [agents, setAgents] = useState<AgentListItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState<{ title: string; description: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
-  const [agentToEdit, setAgentToEdit] = useState<Agent | null>(null);
-  const [agentForIntegration, setAgentForIntegration] = useState<Agent | null>(null);
+  const [agentToEdit, setAgentToEdit] = useState<AgentListItem | null>(null);
+  const [agentForIntegration, setAgentForIntegration] = useState<AgentListItem | null>(null);
 
 
   const fetchAgents = async () => {

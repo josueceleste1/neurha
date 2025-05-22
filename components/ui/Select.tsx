@@ -1,26 +1,9 @@
 // src/components/ui/Select.tsx
 "use client";
 
-import React, {
-  forwardRef,
-  SelectHTMLAttributes,
-  ReactNode
-} from "react";
+import React, { forwardRef } from "react";
+import type { SelectProps } from "@/types/ui";
 
-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  /**
-   * Arrays de opções para exibição. Se fornecido, renderiza automaticamente <option>.
-   */
-  options?: { value: string; label: string }[];
-  /**
-   * Se preferir passar manualmente <option> como children.
-   */
-  children?: ReactNode;
-  /**
-   * Classe Tailwind opcional para customização.
-   */
-  className?: string;
-}
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ options, children, className = "", ...props }, ref) => {

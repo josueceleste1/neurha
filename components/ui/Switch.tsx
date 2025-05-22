@@ -1,11 +1,5 @@
 import React from "react";
-
-export interface SwitchProps {
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  /** Se true, o switch fica desabilitado */
-  disabled?: boolean;
-}
+import type { SwitchProps } from "@/types/ui";
 
 const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange, disabled = false }) => {
   return (

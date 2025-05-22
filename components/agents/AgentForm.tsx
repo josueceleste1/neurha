@@ -9,29 +9,13 @@ import IngestionTab from "./IngestionTab";
 import ModelTab from "@/components/agents/ModelTab";
 import PermissionsTab from "@/components/agents/PermissionsTab";
 import { MOCK_USERS, MOCK_TEAMS } from "@/mocks/mockData";
-
-export interface MyDocument { id: string; name: string; }
+import type {
+  MyDocument,
+  AgentData,
+  AgentFormProps,
+  ToastData,
+} from "@/types/agents";
 type Tab = "basic" | "knowledge" | "ingestion" | "model" | "permissions";
-
-export interface AgentData {
-  id: string;
-  name: string;
-  description?: string;
-  tags?: string;
-  status?: "active" | "inactive";
-  documentIds?: string[];
-}
-
-interface AgentFormProps {
-  onCancel: () => void;
-  myDocuments: MyDocument[];
-  mode?: "create" | "edit";
-  agent?: AgentData | null;
-  onSave?: () => void;
-
-}
-
-interface ToastData { title: string; description: string; }
 
 const tabs: { value: Tab; label: string }[] = [
   { value: "basic", label: "Dados Básicos" },

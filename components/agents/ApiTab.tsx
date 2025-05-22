@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { Server, Copy as CopyIcon, Eye, EyeOff } from 'lucide-react';
 import Switch from '@/components/ui/Switch';
-
-export interface ApiTabProps {
-  apiToken: string;
-  isApiActive: boolean;
-  onGenerateToken(): void;
-  onApiToggle(active: boolean): void;
-}
+import type { ApiTabProps } from '@/types/agents';
 
 const ApiTab: React.FC<ApiTabProps> = ({
   apiToken,

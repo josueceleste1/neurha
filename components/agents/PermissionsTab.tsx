@@ -1,25 +1,6 @@
 import React from "react";
+import type { PermissionsTabOption, PermissionsTabProps } from "@/types/agents";
 
-export interface Option {
-  id: string;
-  name: string;
-}
-
-export interface PermissionsTabProps {
-  userSearch: string;
-  onUserSearchChange: (value: string) => void;
-  onAddUser: () => void;
-  selectedUsers: string[]; // armazena os ids dos usuários selecionados
-  onRemoveUser: (userId: string) => void;
-  users: Option[];
-
-  teamSearch: string;
-  onTeamSearchChange: (value: string) => void;
-  onAddTeam: () => void;
-  selectedTeams: string[]; // armazena os ids das equipes selecionadas
-  onRemoveTeam: (teamId: string) => void;
-  teams: Option[];
-}
 
 const PermissionsTab: React.FC<PermissionsTabProps> = ({
   userSearch,

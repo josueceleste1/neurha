@@ -1,9 +1,6 @@
 // mocks/mockData.ts
 
-export interface TestEntity {
-  id: string;
-  name: string;
-}
+import type { TestEntity } from "@/types/mock";
 
 export const MOCK_USERS: TestEntity[] = [
   { id: "u1", name: "João Silva" },

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, AlertCircle, CheckCircle, Copy, Eye, EyeOff } from 'lucide-react';
-
-// Tipagem das props do Switch
-interface SwitchProps {
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  disabled?: boolean;
-}
+import type { SwitchProps } from '@/types/ui';
+import type { WebhookTabProps } from '@/types/agents';
 
 const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange, disabled = false }) => (
   <button
@@ -29,12 +24,6 @@ const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange, disabled = fa
   </button>
 );
 
-export interface WebhookTabProps {
-  webhookUrl: string;
-  isWebhookActive: boolean;
-  onWebhookUrlChange: (url: string) => void;
-  onWebhookToggle: (active: boolean) => void;
-}
 
 const WebhookTab: React.FC<WebhookTabProps> = ({
   webhookUrl,

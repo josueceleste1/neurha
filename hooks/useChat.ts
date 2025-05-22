@@ -1,13 +1,6 @@
 // hooks/useChat.ts
 import { useState, useRef, useLayoutEffect, useCallback } from "react";
-
-// Define o tipo de uma mensagem
-export interface Message {
-  id: string;
-  from: "user" | "bot";
-  text: string;
-  timestamp: string;
-}
+import type { Message } from "@/types/chat";
 
 export function useChat(initialPrompt: string) {
   // --------------------------

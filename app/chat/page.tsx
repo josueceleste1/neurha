@@ -7,20 +7,7 @@ import { Bot, Search, Upload, Palette, History } from "lucide-react";
 import { useChat } from "@/hooks/useChat";
 import ChatWindow from "@/components/chat/ChatWindow";
 import ChatInput from "@/components/chat/ChatInput";
-
-interface Assistant {
-  id: string;
-  name: string;
-  description: string;
-  greeting: string;
-}
-
-interface ChatHistory {
-  id: string;
-  title: string;
-  date: string;
-  assistantId: string;
-}
+import type { Assistant, ChatHistory } from "@/types/chat";
 
 const CHAT_API_URL = "http://localhost:3001/api/v1";
 
