@@ -29,6 +29,7 @@ const AgentList: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
   const [editModal, setEditModal] = useState<{ show: boolean; agent: Agent | null }>({ show: false, agent: null });
+  const [newName, setNewName] = useState("");
 
   const fetchAgents = async () => {
     try {
@@ -108,8 +109,6 @@ const AgentList: React.FC = () => {
       showToast("Erro", "Não foi possível carregar o agente para edição.");
     }
   };
-
-
 
   return (
     <div className="w-full p-6 bg-white rounded-xl shadow-md border border-gray-200">
@@ -248,7 +247,6 @@ const AgentList: React.FC = () => {
           </div>
         </div>
       )}
-
 
       {editModal.show && editModal.agent && (
         <EditAgentModal
