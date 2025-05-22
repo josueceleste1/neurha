@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import IntegrationTab from "./IntegrationTab";
+import { ArrowLeft } from "lucide-react";
+import WebhookTab from "./WebhookTab";
+import ApiTab from "./ApiTab";
+import WidgetTab from "./WidgetTab";
+import ExternalTab from "./ExternalTab";
 import { AgentData } from "./AgentForm";
-import { X, Plug } from "lucide-react";
 
 
 interface IntegrationModalProps {
@@ -12,6 +15,15 @@ interface IntegrationModalProps {
   agent: AgentData | null;
 }
 
+type Tab = "webhook" | "api" | "widget" | "external";
+const tabs: { value: Tab; label: string }[] = [
+  { value: "webhook", label: "Webhook" },
+  { value: "api", label: "API REST" },
+  { value: "widget", label: "Widget" },
+  { value: "external", label: "Integra\u00e7\u00f5es Externas" },
+];
+
+
 const IntegrationModal: React.FC<IntegrationModalProps> = ({
   isOpen,
   onClose,
@@ -19,6 +31,7 @@ const IntegrationModal: React.FC<IntegrationModalProps> = ({
 }) => {
   if (!isOpen || !agent) return null;
 
+  const [activeTab, setActiveTab] = useState<Tab>("webhook");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [isWebhookActive, setIsWebhookActive] = useState(false);
   const [apiToken, setApiToken] = useState("");
@@ -36,40 +49,66 @@ const IntegrationModal: React.FC<IntegrationModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm overflow-y-auto animate-fadeIn">
-      <div className="relative w-full max-w-[700px] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden animate-scaleIn">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label="Fechar"
-          type="button"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <div className="flex items-center gap-2 px-6 py-4 border-b">
-          <Plug className="w-5 h-5 text-purple-600" />
-          <h2 className="text-lg font-semibold text-gray-800">
-            Integrações do agente {agent.name}
-          </h2>
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/40 backdrop-blur-sm overflow-y-auto">
+      <div className="w-full max-w-[900px] max-h-[90vh] bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="flex items-center border-b px-8 py-4 bg-white shadow-sm shrink-0">
+          <button type="button" onClick={onClose} className="text-gray-700 hover:text-gray-900">
+            <ArrowLeft size={20} />
+          </button>
+          <h2 className="ml-4 text-lg font-semibold">Integrações do agente {agent.name}</h2>
         </div>
-        <div className="p-6 overflow-y-auto max-h-[70vh]">
 
-          <IntegrationTab
-            webhookUrl={webhookUrl}
-            isWebhookActive={isWebhookActive}
-            onWebhookUrlChange={setWebhookUrl}
-            onWebhookToggle={setIsWebhookActive}
-            apiToken={apiToken}
-            isApiActive={isApiActive}
-            onGenerateToken={generateApiToken}
-            onApiToggle={setIsApiActive}
-            widgetCode={widgetCode}
-            isWidgetActive={isWidgetActive}
-            onCopyWidgetCode={copyWidgetCode}
-            onWidgetToggle={setIsWidgetActive}
-          />
+        {/* Tabs */}
+        <div className="px-5 py-4 bg-gray-50 border-b shrink-0">
+          <div className="inline-flex bg-gray-200 rounded-lg p-1 overflow-x-auto">
+            {tabs.map(t => (
+              <button
+                key={t.value}
+                type="button"
+                onClick={() => setActiveTab(t.value)}
+                className={`px-4 py-2.5 text-sm font-medium rounded-md transition-all ${
+                  activeTab === t.value ? "bg-purple-600 text-white shadow-md" : "text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex justify-end gap-3 bg-gray-50 px-6 py-4 border-t">
+
+        {/* Body */}
+        <div className="flex-1 bg-white px-8 mt-2 pb-6 overflow-y-auto">
+          {activeTab === "webhook" && (
+            <WebhookTab
+              webhookUrl={webhookUrl}
+              isWebhookActive={isWebhookActive}
+              onWebhookUrlChange={setWebhookUrl}
+              onWebhookToggle={setIsWebhookActive}
+            />
+          )}
+          {activeTab === "api" && (
+            <ApiTab
+              apiToken={apiToken}
+              isApiActive={isApiActive}
+              onGenerateToken={generateApiToken}
+              onApiToggle={setIsApiActive}
+            />
+          )}
+          {activeTab === "widget" && (
+            <WidgetTab
+              widgetCode={widgetCode}
+              isWidgetActive={isWidgetActive}
+              onCopyWidgetCode={copyWidgetCode}
+              onWidgetToggle={setIsWidgetActive}
+            />
+          )}
+          {activeTab === "external" && <ExternalTab />}
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-3 bg-gray-50 px-8 py-4 border-t border-gray-200 shrink-0">
+
           <button
             type="button"
             onClick={onClose}
