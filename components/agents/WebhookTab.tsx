@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { 
+import React, { useState } from 'react';
+import {
   Shield, 
   AlertCircle, 
   CheckCircle, 
@@ -27,6 +27,7 @@ import {
   Database,
   Layers
 } from 'lucide-react';
+import type { WebhookTabProps, AgentData } from '@/types/agents';
 
 const Switch = ({ checked, onCheckedChange, disabled = false }: { checked: boolean, onCheckedChange: (checked: boolean) => void, disabled?: boolean }) => (
   <button
@@ -56,9 +57,13 @@ const Switch = ({ checked, onCheckedChange, disabled = false }: { checked: boole
   </button>
 );
 
-const WebhookTab = () => {
-  const [webhookUrl, setWebhookUrl] = useState('');
-  const [isWebhookActive, setIsWebhookActive] = useState(true);
+const WebhookTab: React.FC<WebhookTabProps & { agent: AgentData }> = ({
+  webhookUrl,
+  isWebhookActive,
+  onWebhookUrlChange,
+  onWebhookToggle,
+  agent,
+}) => {
   const [showUrl, setShowUrl] = useState(false);
   const [copied, setCopied] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
@@ -243,7 +248,7 @@ ${webhookCode}`;
             </div>
             <Switch
               checked={isWebhookActive}
-              onCheckedChange={setIsWebhookActive}
+              onCheckedChange={onWebhookToggle}
               disabled={!webhookUrl || !isUrlValid}
             />
           </div>
@@ -287,7 +292,7 @@ ${webhookCode}`;
               <input
                 type={showUrl ? 'text' : 'password'}
                 value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
+                onChange={(e) => onWebhookUrlChange(e.target.value)}
                 placeholder="https://api.exemplo.com/webhook"
                 className={`w-full rounded-xl border-2 px-4 py-3 text-sm pr-20 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-400 group-hover:border-gray-400
                   ${webhookUrl && !isUrlValid 
