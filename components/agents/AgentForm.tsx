@@ -146,13 +146,11 @@ const AgentForm: React.FC<AgentFormProps> = ({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const agenteParaCriar = {
-
       name,
       description,
       tags,
       status,
-      uploadFiles,
-      selectedDocs,
+      documentIds: selectedDocs,
       cron,
       chunkSize,
       chunkOverlap,
@@ -164,53 +162,34 @@ const AgentForm: React.FC<AgentFormProps> = ({
       systemPrompt,
       vectorDb,
       apiKey,
-      selectedUsers,
-      selectedTeams,
+      userIds: selectedUsers,
+      teamIds: selectedTeams,
       sourceUrl,
     };
     
     console.log("Dados do agente a ser salvo:", agenteParaCriar);
     
-    const url = mode === 'edit' && agent?.id
-      ? `${NEST_API_URL}/agents/${agent.id}`
-      : `${NEST_API_URL}/agents`;
-    const method = mode === 'edit' && agent?.id ? 'PATCH' : 'POST';
+    const url =
+      mode === "edit" && agent?.id
+        ? `${NEST_API_URL}/agents/${agent.id}`
+        : `${NEST_API_URL}/agents`;
+    const method = mode === "edit" && agent?.id ? "PATCH" : "POST";
     try {
-      if (mode === "edit" && agent) {
-        const res = await fetch(`${NEST_API_URL}/agents/${agent.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            description,
-            tags,
-            status,
-            documentIds: selectedDocs,
-          }),
-        });
-        if (!res.ok) throw new Error("Erro ao atualizar agente");
-        setToastData({
-          title: "Agente atualizado",
-          description: `O agente ${name} foi atualizado com sucesso.`,
-        });
-      } else {
-        const res = await fetch(`${NEST_API_URL}/agents`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            description,
-            tags,
-            status,
-            documentIds: selectedDocs,
-          }),
-        });
-        if (!res.ok) throw new Error("Erro ao criar agente");
-        setToastData({
-          title: "Agente criado",
-          description: `O agente ${name} foi cadastrado com sucesso.`,
-        });
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(agenteParaCriar),
+      });
+      if (!res.ok) {
+        throw new Error(method === "POST" ? "Erro ao criar agente" : "Erro ao atualizar agente");
       }
+      setToastData({
+        title: method === "POST" ? "Agente criado" : "Agente atualizado",
+        description:
+          method === "POST"
+            ? `O agente ${name} foi cadastrado com sucesso.`
+            : `O agente ${name} foi atualizado com sucesso.`,
+      });
       onSave?.();
       onCancel();
     } catch (err) {
