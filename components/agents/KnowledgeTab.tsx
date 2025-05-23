@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef } from "react";
+import React, { useRef } from "react";
 import { Upload, Database as DatabaseIcon, FileText } from "lucide-react";
 import type { MyDocument, KnowledgeTabProps } from "@/types/agents";
 
