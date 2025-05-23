@@ -66,7 +66,8 @@ const WebhookTab: React.FC<WebhookTabProps & { agent: AgentData }> = ({
 }) => {
   const [showUrl, setShowUrl] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [expandedSection, setExpandedSection] =
+    useState<'events' | 'examples' | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('success'); // idle, testing, success, error
   const [lastTestResult, setLastTestResult] = useState({
