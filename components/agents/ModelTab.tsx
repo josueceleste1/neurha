@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Switch from "@/components/ui/Switch";
 import type { ModelOption, ModelTabProps } from "@/types/agents";
 
@@ -125,6 +125,13 @@ const ModelTab: React.FC<ModelTabProps> = props => {
     apiKey,
     onApiKeyChange,
   } = props;
+
+  const [extraValues, setExtraValues] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    // reset when selections change
+    setExtraValues({});
+  }, [specificModel, vectorDb]);
 
   const extraModelFields = MODEL_CONFIG_FIELDS[specificModel] || [];
   const extraVectorFields = VECTOR_DB_FIELDS[vectorDb] || [];
@@ -266,8 +273,15 @@ const ModelTab: React.FC<ModelTabProps> = props => {
               <label className={labelClasses}>{label}</label>
               <input
                 type="text"
-                value={(props as any)[key] || ""}
-                onChange={e => (props as any)[`on${capitalize(key)}Change`](e.target.value)}
+                value={extraValues[key] ?? (props as any)[key] ?? ""}
+                onChange={e => {
+                  const val = e.target.value;
+                  setExtraValues(prev => ({ ...prev, [key]: val }));
+                  const handler = (props as any)[`on${capitalize(key)}Change`];
+                  if (typeof handler === "function") {
+                    handler(val);
+                  }
+                }}
                 placeholder={placeholder}
                 className={inputClasses}
               />
@@ -285,13 +299,16 @@ const ModelTab: React.FC<ModelTabProps> = props => {
               <label className={labelClasses}>{label}</label>
               <input
                 type={key === "secure" ? "checkbox" : "text"}
-                checked={key === "secure" ? (props as any)[key] : undefined}
-                value={key !== "secure" ? (props as any)[key] || "" : undefined}
-                onChange={e =>
-                  key === "secure"
-                    ? (props as any)[`on${capitalize(key)}Change`](e.target.checked)
-                    : (props as any)[`on${capitalize(key)}Change`](e.target.value)
-                }
+                checked={key === "secure" ? extraValues[key] ?? (props as any)[key] : undefined}
+                value={key !== "secure" ? extraValues[key] ?? (props as any)[key] ?? "" : undefined}
+                onChange={e => {
+                  const val = key === "secure" ? e.target.checked : e.target.value;
+                  setExtraValues(prev => ({ ...prev, [key]: val }));
+                  const handler = (props as any)[`on${capitalize(key)}Change`];
+                  if (typeof handler === "function") {
+                    handler(val);
+                  }
+                }}
                 placeholder={placeholder}
                 className={inputClasses}
               />
