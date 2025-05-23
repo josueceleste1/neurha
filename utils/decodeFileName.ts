@@ -1,8 +1,8 @@
 export function decodeFileName(name: string): string {
-    try {
-      return decodeURIComponent(escape(name));
-    } catch {
-      return name;
-    }
+  try {
+    return decodeURIComponent(name);
+  } catch {
+    return name;
   }
+}
   
