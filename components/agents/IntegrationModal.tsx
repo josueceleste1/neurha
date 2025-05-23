@@ -82,25 +82,6 @@ export default function IntegrationModal({ isOpen, onClose, agent }: Integration
         {/* Content */}
         <div className="flex-1 bg-white px-6 py-6 overflow-y-auto">
           <div className="max-w-2xl mx-auto">
-            {/* Tab Header */}
-            <div className="mb-6 pb-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
-                  {tabs.find(t => t.value === activeTab)?.icon}
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {tabs.find(t => t.value === activeTab)?.label}
-                  </h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {activeTab === "webhook" && "Configure webhooks para receber notificações em tempo real"}
-                    {activeTab === "api" && "Gere tokens de acesso para integração via API REST"}
-                    {activeTab === "widget" && "Incorpore o agente em seu site com código de widget"}
-                    {activeTab === "external" && "Conecte com plataformas e ferramentas externas"}
-                  </p>
-                </div>
-              </div>
-            </div>
 
             {/* Tab Content */}
             <div className="space-y-4">
