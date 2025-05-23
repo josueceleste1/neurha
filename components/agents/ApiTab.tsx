@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 // Mock Switch component
-const Switch = ({ checked, onCheckedChange, disabled }) => (
+const Switch = ({ checked, onCheckedChange, disabled }: { checked: boolean, onCheckedChange: (checked: boolean) => void, disabled: boolean }) => (
   <button
     onClick={() => !disabled && onCheckedChange(!checked)}
     disabled={disabled}
@@ -66,7 +66,7 @@ const ApiTab = () => {
     }, 1500);
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
       month: '2-digit',

@@ -28,7 +28,7 @@ import {
   Layers
 } from 'lucide-react';
 
-const Switch = ({ checked, onCheckedChange, disabled = false }) => (
+const Switch = ({ checked, onCheckedChange, disabled = false }: { checked: boolean, onCheckedChange: (checked: boolean) => void, disabled?: boolean }) => (
   <button
     type="button"
     role="switch"
@@ -94,7 +94,7 @@ const WebhookTab = () => {
     }
   }'`);
 
-  const isValidUrl = (url) => {
+  const isValidUrl = (url: string) => {
     try {
       const urlObj = new URL(url);
       return urlObj.protocol === 'https:';
@@ -473,13 +473,13 @@ ${webhookCode}`;
                   <div key={event.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
-                        <IconComponent className={`w-5 h-5 ${eventFilters[event.id] ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <IconComponent className={`w-5 h-5 ${eventFilters[event.id as keyof typeof eventFilters] ? 'text-blue-600' : 'text-gray-400'}`} />
                         <span className="font-medium text-gray-900">{event.name}</span>
                       </div>
                       <p className="text-sm text-gray-600 ml-8 mt-1">{event.description}</p>
                     </div>
                     <Switch
-                      checked={eventFilters[event.id]}
+                      checked={eventFilters[event.id as keyof typeof eventFilters]}
                       onCheckedChange={(checked) => setEventFilters(prev => ({
                         ...prev,
                         [event.id]: checked
@@ -487,8 +487,7 @@ ${webhookCode}`;
                     />
                   </div>
                 );
-              })}
-            </div>
+              })}            </div>
           </div>
         )}
       </div>
@@ -498,8 +497,7 @@ ${webhookCode}`;
         <button
           type="button"
           className="w-full p-4 text-left hover:bg-gray-50 flex items-center justify-between transition-colors duration-200"
-          onClick={() => setExpandedSection(expandedSection === 'examples' ? null : 'examples')}
-        >
+          onClick={() => setExpandedSection(expandedSection === 'examples' ? null : 'examples' as any)}        >
           <div className="flex items-center space-x-3">
             <ExternalLink className="w-5 h-5 text-orange-600" />
             <span className="font-medium text-gray-900">Exemplos de Integração</span>

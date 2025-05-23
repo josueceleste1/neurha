@@ -91,6 +91,7 @@ export default function IntegrationModal({ isOpen, onClose, agent }: Integration
                   isWebhookActive={isWebhookActive}
                   onWebhookUrlChange={setWebhookUrl}
                   onWebhookToggle={setIsWebhookActive}
+                  agent={agent}
                 />
               )}
               {activeTab === "api" && (
@@ -99,6 +100,7 @@ export default function IntegrationModal({ isOpen, onClose, agent }: Integration
                   isApiActive={isApiActive}
                   onGenerateToken={generateApiToken}
                   onApiToggle={setIsApiActive}
+                  agent={agent}
                 />
               )}
               {activeTab === "widget" && (
@@ -107,9 +109,10 @@ export default function IntegrationModal({ isOpen, onClose, agent }: Integration
                   isWidgetActive={isWidgetActive}
                   onCopyWidgetCode={copyWidgetCode}
                   onWidgetToggle={setIsWidgetActive}
+                  agent={agent}
                 />
               )}
-              {activeTab === "external" && <ExternalTab />}
+              {activeTab === "external" && <ExternalTab agent={agent} />}
             </div>
           </div>
         </div>
