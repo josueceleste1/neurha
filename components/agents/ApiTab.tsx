@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Server, 
   Copy as CopyIcon, 
@@ -17,6 +17,7 @@ import {
   Key,
   Zap
 } from 'lucide-react';
+import type { ApiTabProps, AgentData } from '@/types/agents';
 
 // Mock Switch component
 const Switch = ({ checked, onCheckedChange, disabled }: { checked: boolean, onCheckedChange: (checked: boolean) => void, disabled: boolean }) => (
@@ -38,13 +39,17 @@ const Switch = ({ checked, onCheckedChange, disabled }: { checked: boolean, onCh
   </button>
 );
 
-const ApiTab = () => {
-  const [apiToken, setApiToken] = useState('sk-proj-1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z');
-  const [isApiActive, setIsApiActive] = useState(true);
+const ApiTab: React.FC<ApiTabProps & { agent: AgentData }> = ({
+  apiToken,
+  isApiActive,
+  onGenerateToken,
+  onApiToggle,
+  agent,
+}) => {
+  const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showToken, setShowToken] = useState(false);
   const [expandedExample, setExpandedExample] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [lastGenerated, setLastGenerated] = useState(new Date());
   const [expandedSecurity, setExpandedSecurity] = useState(false);
 
@@ -59,8 +64,7 @@ const ApiTab = () => {
     setIsGenerating(true);
     // Simulate API call
     setTimeout(() => {
-      const newToken = 'sk-proj-' + Math.random().toString(36).substring(2, 50);
-      setApiToken(newToken);
+      onGenerateToken();
       setLastGenerated(new Date());
       setIsGenerating(false);
     }, 1500);
@@ -119,7 +123,7 @@ const ApiTab = () => {
             </div>
             <Switch
               checked={isApiActive}
-              onCheckedChange={setIsApiActive}
+              onCheckedChange={onApiToggle}
               disabled={!apiToken}
             />
           </div>

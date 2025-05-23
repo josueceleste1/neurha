@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { WidgetTabProps, AgentData } from '@/types/agents';
 import { 
   Code,
   Copy,
@@ -40,17 +41,13 @@ const Switch = ({ checked, onCheckedChange, disabled }) => (
   </button>
 );
 
-const WidgetTab = () => {
-  const [widgetCode] = useState(`<script>
-  (function() {
-    var chatWidget = document.createElement('div');
-    chatWidget.id = 'chat-widget-container';
-    chatWidget.innerHTML = '<iframe src="https://widget.meuagente.com/chat/abc123" style="width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" title="Chat Assistant"></iframe>';
-    document.body.appendChild(chatWidget);
-  })();
-</script>`);
-  
-  const [isWidgetActive, setIsWidgetActive] = useState(true);
+const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
+  widgetCode,
+  isWidgetActive,
+  onCopyWidgetCode,
+  onWidgetToggle,
+  agent,
+}) => {
   const [copied, setCopied] = useState(false);
   const [expandedCustomization, setExpandedCustomization] = useState(false);
   const [expandedExamples, setExpandedExamples] = useState(false);
@@ -59,8 +56,7 @@ const WidgetTab = () => {
   const [widgetPosition, setWidgetPosition] = useState('bottom-right');
 
   const handleCopy = async () => {
-    if (!widgetCode) return;
-    await navigator.clipboard.writeText(widgetCode);
+    onCopyWidgetCode();
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
@@ -152,7 +148,7 @@ const WidgetTab = () => {
             </div>
             <Switch
               checked={isWidgetActive}
-              onCheckedChange={setIsWidgetActive}
+              onCheckedChange={onWidgetToggle}
               disabled={!widgetCode}
             />
           </div>

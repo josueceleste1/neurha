@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Plug,
   Slack,
@@ -30,6 +30,7 @@ import {
   Database,
   Cloud
 } from 'lucide-react';
+import type { AgentData } from '@/types/agents';
 
 const integrations = [
   { 
@@ -150,7 +151,7 @@ const configOptions: Record<string, { name: string; label: string; type: 'text' 
   ]
 };
 
-const ExternalTab: React.FC = () => {
+const ExternalTab: React.FC<{ agent: AgentData }> = ({ agent }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [configValues, setConfigValues] = useState<Record<string, Record<string, string>>>(() => {
     const initial: Record<string, Record<string, string>> = {};
