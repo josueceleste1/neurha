@@ -61,7 +61,9 @@ const AgentForm: React.FC<AgentFormProps> = ({
   const [systemPrompt, setSystemPrompt] = useState(
     "Você é um assistente AI que responde perguntas de forma útil e precisa."
   );
-  const [vectorDb, setVectorDb] = useState<"chroma" | "supabase" | "pinecone" | "qdrant" | "weaviate">("supabase");
+  const [vectorDb, setVectorDb] = useState<
+    "chroma" | "supabase" | "pinecone" | "qdrant" | "weaviate"
+  >("chroma");
   const [apiKey, setApiKey] = useState("");
   // Permissions
   const [userSearch, setUserSearch] = useState("");
