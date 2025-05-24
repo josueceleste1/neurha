@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactPaginate from "react-paginate";
 import {
   Edit,
   Trash,
@@ -20,11 +21,13 @@ const NEST_API_URL = "http://localhost:3001/api/v1";
 const AgentList: React.FC = () => {
   const [agents, setAgents] = useState<AgentListItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [toast, setToast] = useState<{ title: string; description: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; agentId: string | null }>({ show: false, agentId: null });
   const [agentToEdit, setAgentToEdit] = useState<AgentListItem | null>(null);
   const [agentForIntegration, setAgentForIntegration] = useState<AgentListItem | null>(null);
+  const itemsPerPage = 5;
 
 
   const fetchAgents = async () => {
@@ -45,6 +48,11 @@ const AgentList: React.FC = () => {
 
   const filteredAgents = agents.filter(a =>
     a.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredAgents.length / itemsPerPage);
+  const paginatedAgents = filteredAgents.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   // Formata apenas a data de criação (dd/mm/aaaa)
@@ -83,6 +91,9 @@ const AgentList: React.FC = () => {
         throw new Error(data.error || "Erro ao excluir agente");
       }
       setAgents(prev => prev.filter(a => a.id !== id));
+      if (paginatedAgents.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
       showToast("Agente excluído", "O agente foi excluído com sucesso.");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erro ao excluir agente";
@@ -148,17 +159,30 @@ const AgentList: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 bg-white">
-                {filteredAgents.map(agent => {
-                  const isActive = agent.status === "active";
-                  return (
-                    <tr key={agent.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 font-medium text-gray-900 flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-purple-600" />
-                        {agent.name}
-                      </td>
-                      <td className="px-2 py-4 text-center">
-                        <div className="inline-flex items-center gap-2">
-                          <Switch checked={isActive} onCheckedChange={() => toggleAgentStatus(agent.id)} />
+                {paginatedAgents.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-gray-500">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <MessageSquare className="w-8 h-8 text-purple-300 mb-2" />
+                        <span className="text-lg font-semibold text-gray-900">Nenhum agente encontrado</span>
+                        <span className="text-gray-500 text-sm">
+                          {searchTerm ? "Nenhum agente corresponde à sua busca." : "Comece adicionando seu primeiro agente."}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedAgents.map(agent => {
+                    const isActive = agent.status === "active";
+                    return (
+                      <tr key={agent.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4 font-medium text-gray-900 flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4 text-purple-600" />
+                          {agent.name}
+                        </td>
+                        <td className="px-2 py-4 text-center">
+                          <div className="inline-flex items-center gap-2">
+                            <Switch checked={isActive} onCheckedChange={() => toggleAgentStatus(agent.id)} />
                           <span
                             className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                               isActive
@@ -199,9 +223,34 @@ const AgentList: React.FC = () => {
                       </td>
                     </tr>
                   );
-                })}
+                })
+                )}
               </tbody>
             </table>
+          </div>
+          <div className="flex justify-center mt-6 pb-4">
+            <ReactPaginate
+              previousLabel={<span className="px-2 py-1">Anterior</span>}
+              nextLabel={<span className="px-2 py-1">Próxima</span>}
+              breakLabel={"..."}
+              pageCount={totalPages}
+              marginPagesDisplayed={1}
+              pageRangeDisplayed={3}
+              onPageChange={(selected) => setCurrentPage(selected.selected + 1)}
+              forcePage={currentPage - 1}
+              containerClassName="flex items-center gap-1"
+              pageClassName=""
+              pageLinkClassName="px-3 py-1.5 rounded border border-gray-200 bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors text-sm"
+              previousClassName=""
+              previousLinkClassName="px-3 py-1.5 rounded border border-gray-200 bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors text-sm"
+              nextClassName=""
+              nextLinkClassName="px-3 py-1.5 rounded border border-gray-200 bg-white text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors text-sm"
+              breakClassName=""
+              breakLinkClassName="px-3 py-1.5 rounded border border-gray-200 bg-white text-gray-700"
+              activeClassName=""
+              activeLinkClassName="!bg-purple-600 !text-white border-purple-600"
+              disabledClassName="opacity-50 cursor-not-allowed"
+            />
           </div>
         </>
       )}
