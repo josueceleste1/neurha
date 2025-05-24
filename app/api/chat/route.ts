@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log('[api/chat] request body:', body);
     const question = body.question;
+    const agentId = body.agentId;
     if (!question) {
       return NextResponse.json({ error: 'Pergunta não informada.' }, { status: 400 });
     }
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
     const apiResponse = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, agentId }),
     });
 
     const text = await apiResponse.text();
