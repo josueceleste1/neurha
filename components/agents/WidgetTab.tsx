@@ -22,7 +22,15 @@ import {
 } from 'lucide-react';
 
 // Mock Switch component
-const Switch = ({ checked, onCheckedChange, disabled }) => (
+const Switch = ({
+  checked,
+  onCheckedChange,
+  disabled,
+}: {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  disabled: boolean;
+}) => (
   <button
     onClick={() => !disabled && onCheckedChange(!checked)}
     disabled={disabled}
