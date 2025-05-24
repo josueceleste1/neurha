@@ -40,6 +40,7 @@ export interface UploadModalProps {
     category: string;
     description: string;
     file: File | null;
+    agentId: string;
   };
   setUploadData: React.Dispatch<
     React.SetStateAction<{
@@ -47,6 +48,8 @@ export interface UploadModalProps {
       category: string;
       description: string;
       file: File | null;
+      agentId: string;
     }>
   >;
+  agents: { id: string; name: string }[];
 }

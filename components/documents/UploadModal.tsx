@@ -2,7 +2,7 @@ import React from "react";
 import { UploadCloud, X } from "lucide-react";
 import type { UploadModalProps } from "@/types/documents";
 
-const UploadModal: React.FC<UploadModalProps> = ({ open, onClose, onSubmit, uploadData, setUploadData }) => {
+const UploadModal: React.FC<UploadModalProps> = ({ open, onClose, onSubmit, uploadData, setUploadData, agents }) => {
   if (!open) return null;
 
   return (
@@ -36,6 +36,9 @@ const UploadModal: React.FC<UploadModalProps> = ({ open, onClose, onSubmit, uplo
             formData.append('name', uploadData.name);
             formData.append('category', uploadData.category);
             formData.append('description', uploadData.description);
+            if (uploadData.agentId) {
+              formData.append('agentId', uploadData.agentId);
+            }
 
             // Log dos dados do formulário
             console.log('Dados do documento:', {
@@ -50,7 +53,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ open, onClose, onSubmit, uplo
             });
 
             await onSubmit(formData);
-            setUploadData({ name: '', category: '', description: '', file: null });
+            setUploadData({ name: '', category: '', description: '', file: null, agentId: '' });
             onClose();
           }}
           className="space-y-5"
@@ -78,13 +81,27 @@ const UploadModal: React.FC<UploadModalProps> = ({ open, onClose, onSubmit, uplo
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Descrição</label>
-            <textarea
-              className="w-full px-4 py-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base font-medium placeholder:text-gray-400 min-h-[100px] resize-y"
-              placeholder="Breve descrição do documento"
-              value={uploadData.description}
-              onChange={e => setUploadData({ ...uploadData, description: e.target.value })}
-            />
-          </div>
+          <textarea
+            className="w-full px-4 py-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base font-medium placeholder:text-gray-400 min-h-[100px] resize-y"
+            placeholder="Breve descrição do documento"
+            value={uploadData.description}
+            onChange={e => setUploadData({ ...uploadData, description: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Agente</label>
+          <select
+            className="w-full px-4 py-2.5 bg-white text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base font-medium"
+            value={uploadData.agentId}
+            onChange={e => setUploadData({ ...uploadData, agentId: e.target.value })}
+          >
+            <option value="">Selecione um agente</option>
+            {agents.map(agent => (
+              <option key={agent.id} value={agent.id}>{agent.name}</option>
+            ))}
+          </select>
+        </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Arquivo</label>

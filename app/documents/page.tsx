@@ -40,7 +40,8 @@ const DocumentsPage: FC = () => {
   const [editModal, setEditModal] = useState<{ show: boolean; doc: DocumentItem | null }>({ show: false, doc: null });
   const [newName, setNewName] = useState("");
   const [uploadModal, setUploadModal] = useState(false);
-  const [uploadData, setUploadData] = useState({ name: '', category: '', description: '', file: null as File | null });
+  const [uploadData, setUploadData] = useState({ name: '', category: '', description: '', file: null as File | null, agentId: '' });
+  const [agents, setAgents] = useState<{ id: string; name: string }[]>([]);
   const itemsPerPage = 5;
 
   const userName = "Josué Celeste";
@@ -71,6 +72,22 @@ const DocumentsPage: FC = () => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    async function fetchAgents() {
+      try {
+        const res = await fetch(`${NEST_API_URL}/agents`, { credentials: "include" });
+        const data = await res.json();
+        const opts = Array.isArray(data)
+          ? data.map((a: any) => ({ id: a.id, name: a.name }))
+          : [];
+        setAgents(opts);
+      } catch (err) {
+        console.error('Error loading agents', err);
+      }
+    }
+    fetchAgents();
+  }, []);
+
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -93,6 +110,9 @@ const DocumentsPage: FC = () => {
 
   const handleUploadCustom = async (formData: FormData) => {
     console.log("Enviando para API NestJS /documents/upload", Array.from(formData.entries()));
+    if (uploadData.agentId) {
+      formData.append('agentId', uploadData.agentId);
+    }
     try {
       const res = await fetch(`${NEST_API_URL}/documents/upload`, { method: "POST", body: formData, credentials: "include" });
       if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -301,6 +321,7 @@ const DocumentsPage: FC = () => {
         onSubmit={handleUploadCustom}
         uploadData={uploadData}
         setUploadData={setUploadData}
+        agents={agents}
       />
 
       <main className="container mx-auto px-4 py-8">
