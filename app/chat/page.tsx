@@ -59,7 +59,10 @@ const ChatPage: FC = () => {
     sendMessage,
     textareaRef,
     endRef,
-  } = useChat(selectedAssistant?.greeting || "Olá! Como posso ajudar?");
+  } = useChat(
+    selectedAssistant?.greeting || "Olá! Como posso ajudar?",
+    selectedAssistant?.id
+  );
 
   const userName = "Josué Celeste";
   const handleLogout = () => console.log("Logout");

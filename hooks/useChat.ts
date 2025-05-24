@@ -1,8 +1,8 @@
 // hooks/useChat.ts
-import { useState, useRef, useLayoutEffect, useCallback } from "react";
+import { useState, useRef, useLayoutEffect, useCallback, useEffect } from "react";
 import type { Message } from "@/types/chat";
 
-export function useChat(initialPrompt: string) {
+export function useChat(initialPrompt: string, agentId?: string) {
   // --------------------------
   // ESTADOS & REFS
   // --------------------------
@@ -20,6 +20,11 @@ export function useChat(initialPrompt: string) {
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);     // usado para scroll automático
+  const agentIdRef = useRef<string | undefined>(agentId);
+
+  useEffect(() => {
+    agentIdRef.current = agentId;
+  }, [agentId]);
 
   // --------------------------
   // FUNÇÕES
@@ -51,7 +56,7 @@ export function useChat(initialPrompt: string) {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: text }),
+        body: JSON.stringify({ question: text, agentId: agentIdRef.current }),
       });
 
       const payload = await res.json();
