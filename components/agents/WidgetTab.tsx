@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { WidgetTabProps, AgentData } from '@/types/agents';
-import { 
+import {
   Code,
   Copy,
   Monitor,
@@ -21,7 +21,6 @@ import {
   Download
 } from 'lucide-react';
 
-// Mock Switch component
 const Switch = ({
   checked,
   onCheckedChange,
@@ -71,20 +70,20 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
 
   const downloadHTML = () => {
     const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exemplo Widget - Meu Agente</title>
-</head>
-<body>
-    <h1>Minha Página com Widget</h1>
-    <p>O widget aparecerá no canto inferior direito da página.</p>
-    
-    ${widgetCode}
-</body>
-</html>`;
-    
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Exemplo Widget - Meu Agente</title>
+        </head>
+        <body>
+            <h1>Minha Página com Widget</h1>
+            <p>O widget aparecerá no canto inferior direito da página.</p>
+            
+            ${widgetCode}
+        </body>
+        </html>`;
+
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -122,8 +121,8 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
             <div className="flex items-center space-x-4">
               <div className={`
                 p-3 rounded-xl transition-all duration-300
-                ${isWidgetActive 
-                  ? 'bg-gradient-to-br from-blue-100 to-indigo-100 shadow-sm' 
+                ${isWidgetActive
+                  ? 'bg-gradient-to-br from-blue-100 to-indigo-100 shadow-sm'
                   : 'bg-gray-100'
                 }
               `}>
@@ -137,8 +136,8 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
                 <div className="flex items-center space-x-2">
                   <div className={`
                     flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium
-                    ${isWidgetActive 
-                      ? 'bg-blue-100 text-blue-700' 
+                    ${isWidgetActive
+                      ? 'bg-blue-100 text-blue-700'
                       : 'bg-gray-100 text-gray-600'
                     }
                   `}>
@@ -248,9 +247,9 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
 
           <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 bg-gray-50">
             <div className="flex justify-center">
-              <div 
+              <div
                 className="bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-300"
-                style={{ 
+                style={{
                   width: previewDevices.find(d => d.id === selectedPreview)?.width,
                   maxWidth: '100%'
                 }}
@@ -260,7 +259,7 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
                     <Globe className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p className="text-sm">Sua página web</p>
                   </div>
-                  
+
                   {/* Widget Preview */}
                   <div className="absolute bottom-4 right-4">
                     <div className={`
@@ -345,14 +344,14 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
               <h4 className="font-medium text-gray-900 mb-2">Código Personalizado</h4>
               <div className="bg-gray-900 rounded-lg p-3 overflow-x-auto">
                 <pre className="text-xs text-gray-300 font-mono">
-{`<script>
-  (function() {
-    var widget = document.createElement('div');
-    widget.style.cssText = 'position: fixed; ${positionOptions.find(p => p.id === widgetPosition)?.position} z-index: 9999;';
-    widget.innerHTML = '<iframe src="https://widget.meuagente.com/chat/abc123?theme=${widgetTheme}" style="width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);"></iframe>';
-    document.body.appendChild(widget);
-  })();
-</script>`}
+                  {`<script>
+                    (function() {
+                      var widget = document.createElement('div');
+                      widget.style.cssText = 'position: fixed; ${positionOptions.find(p => p.id === widgetPosition)?.position} z-index: 9999;';
+                      widget.innerHTML = '<iframe src="https://widget.meuagente.com/chat/abc123?theme=${widgetTheme}" style="width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);"></iframe>';
+                      document.body.appendChild(widget);
+                    })();
+                  </script>`}
                 </pre>
               </div>
             </div>
@@ -375,19 +374,19 @@ const WidgetTab: React.FC<WidgetTabProps & { agent: AgentData }> = ({
         </button>
         {expandedExamples && (
           <div className="border-t border-gray-100 p-6 space-y-6">
-            
+
             {/* WordPress */}
             <div>
               <h4 className="font-medium text-gray-900 mb-3">WordPress</h4>
               <p className="text-sm text-gray-600 mb-3">Adicione o código no arquivo <code className="bg-gray-100 px-1 rounded">functions.php</code> do seu tema:</p>
               <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
                 <pre className="text-sm text-gray-300 font-mono">
-{`function add_chat_widget() {
-    ?>
-    ${widgetCode}
-    <?php
-}
-add_action('wp_footer', 'add_chat_widget');`}
+                  {`function add_chat_widget() {
+                    ?>
+                    ${widgetCode}
+                    <?php
+                }
+                add_action('wp_footer', 'add_chat_widget');`}
                 </pre>
               </div>
             </div>
@@ -398,29 +397,29 @@ add_action('wp_footer', 'add_chat_widget');`}
               <p className="text-sm text-gray-600 mb-3">Use o useEffect para carregar o widget:</p>
               <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
                 <pre className="text-sm text-gray-300 font-mono">
-{`import { useEffect } from 'react';
+                  {`import { useEffect } from 'react';
 
-function App() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.innerHTML = \`
-      (function() {
-        var chatWidget = document.createElement('div');
-        chatWidget.id = 'chat-widget-container';
-        chatWidget.innerHTML = '<iframe src="https://widget.meuagente.com/chat/abc123" style="width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" title="Chat Assistant"></iframe>';
-        document.body.appendChild(chatWidget);
-      })();
-    \`;
-    document.body.appendChild(script);
-    
-    return () => {
-      const widget = document.getElementById('chat-widget-container');
-      if (widget) widget.remove();
-    };
-  }, []);
+                  function App() {
+                    useEffect(() => {
+                      const script = document.createElement('script');
+                      script.innerHTML = \`
+                        (function() {
+                          var chatWidget = document.createElement('div');
+                          chatWidget.id = 'chat-widget-container';
+                          chatWidget.innerHTML = '<iframe src="https://widget.meuagente.com/chat/abc123" style="width: 350px; height: 500px; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" title="Chat Assistant"></iframe>';
+                          document.body.appendChild(chatWidget);
+                        })();
+                      \`;
+                      document.body.appendChild(script);
+                      
+                      return () => {
+                        const widget = document.getElementById('chat-widget-container');
+                        if (widget) widget.remove();
+                      };
+                    }, []);
 
-  return <div>Seu App</div>;
-}`}
+                    return <div>Seu App</div>;
+                  }`}
                 </pre>
               </div>
             </div>
@@ -431,9 +430,9 @@ function App() {
               <p className="text-sm text-gray-600 mb-3">Adicione no arquivo <code className="bg-gray-100 px-1 rounded">theme.liquid</code> antes da tag <code className="bg-gray-100 px-1 rounded">&lt;/body&gt;</code>:</p>
               <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
                 <pre className="text-sm text-gray-300 font-mono">
-{`<!-- Chat Widget -->
-${widgetCode}
-<!-- End Chat Widget -->`}
+                  {`<!-- Chat Widget -->
+                  ${widgetCode}
+                  <!-- End Chat Widget -->`}
                 </pre>
               </div>
             </div>
